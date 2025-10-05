@@ -14,9 +14,9 @@ const Index = () => {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img 
-              src="https://cdn.poehali.dev/files/e029a36d-cb18-4895-a0a6-5d31dc75c0d4.png" 
-              alt="ТехГлобал" 
-              className="h-12 md:h-14"
+              src="https://cdn.poehali.dev/files/768041b8-f02e-4039-ac01-4874e237eafe.png" 
+              alt="TechGlobal" 
+              className="h-10 md:h-12 object-contain"
             />
           </div>
           <nav className="hidden lg:flex items-center gap-6">
