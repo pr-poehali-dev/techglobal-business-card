@@ -397,7 +397,7 @@ const Index = () => {
             
             <div className="mt-12 text-center">
               <p className="text-lg text-muted-foreground mb-6">
-                <span className="font-semibold text-foreground">Срок поставки:</span> от 30 до 45 дней с момента оплаты
+                <span className="font-semibold text-foreground">Срок поставки:</span> от 30 до 60 дней с момента оплаты
               </p>
               <Button size="lg" onClick={() => scrollToSection('contact')}>
                 Начать сотрудничество
