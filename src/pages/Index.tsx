@@ -22,7 +22,7 @@ const Index = () => {
           <nav className="hidden md:flex items-center gap-8">
             <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors">О компании</button>
             <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors">Услуги</button>
-            <button onClick={() => scrollToSection('advantages')} className="text-sm font-medium hover:text-primary transition-colors">Преимущества</button>
+            <button onClick={() => scrollToSection('gallery')} className="text-sm font-medium hover:text-primary transition-colors">Оборудование</button>
             <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-primary transition-colors">Контакты</button>
           </nav>
           <Button onClick={() => scrollToSection('contact')}>Связаться</Button>
@@ -139,7 +139,62 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="advantages" className="py-20 bg-white">
+      <section id="gallery" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Наше оборудование</h2>
+            <p className="text-lg text-muted-foreground">
+              Современная спецтехника от ведущих производителей КНР
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://cdn.poehali.dev/files/9895b2e9-be08-424d-9f49-d8ec7fb53f76.jpg" 
+                  alt="Строительная спецтехника" 
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Строительная техника</h3>
+                <p className="text-sm text-muted-foreground">Экскаваторы, бульдозеры, погрузчики для любых строительных задач</p>
+              </div>
+            </Card>
+            
+            <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://cdn.poehali.dev/files/6a84bba9-a7c8-49b2-a49b-5ac925118c26.jpeg" 
+                  alt="Автокран XCMG" 
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Грузоподъёмная техника</h3>
+                <p className="text-sm text-muted-foreground">Автокраны и подъёмное оборудование XCMG высокой грузоподъёмности</p>
+              </div>
+            </Card>
+            
+            <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://cdn.poehali.dev/files/cff960d3-bb8d-4972-b1a8-0d3414373563.jpeg" 
+                  alt="Буровое оборудование" 
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Буровая техника</h3>
+                <p className="text-sm text-muted-foreground">Буровые установки для геологоразведки и строительства</p>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section id="advantages" className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Наши преимущества</h2>
