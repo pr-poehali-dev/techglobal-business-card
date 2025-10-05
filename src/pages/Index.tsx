@@ -366,7 +366,7 @@ const Index = () => {
           href="https://wa.me/79621250700" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="w-14 h-14 bg-[#25D366] hover:bg-[#20BD5A] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110"
+          className="w-14 h-14 bg-[#25D366] hover:bg-[#20BD5A] rounded-full flex items-center justify-center animate-pulse-soft hover:shadow-xl transition-all hover:scale-110"
           aria-label="Написать в WhatsApp"
         >
           <Icon name="MessageCircle" size={28} className="text-white" />
@@ -375,7 +375,7 @@ const Index = () => {
           href="https://t.me/79621250700" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="w-14 h-14 bg-[#0088cc] hover:bg-[#0077b5] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110"
+          className="w-14 h-14 bg-[#0088cc] hover:bg-[#0077b5] rounded-full flex items-center justify-center animate-pulse-soft hover:shadow-xl transition-all hover:scale-110"
           aria-label="Написать в Telegram"
         >
           <Icon name="Send" size={26} className="text-white" />
