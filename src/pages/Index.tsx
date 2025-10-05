@@ -9,9 +9,33 @@ const Index = () => {
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      setSubmitStatus('success');
+      setFormData({ name: '', phone: '', message: '' });
+      
+      setTimeout(() => {
+        setSubmitStatus('idle');
+      }, 5000);
+    } catch (error) {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [scrollY, setScrollY] = useState(0);
+  const [formData, setFormData] = useState({ name: '', phone: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -625,32 +649,65 @@ const Index = () => {
               
               <Card className="p-8">
                 <h3 className="text-xl font-semibold mb-6">Отправить заявку</h3>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSubmit}>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Ваше имя</label>
                     <input 
                       type="text" 
-                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                       placeholder="Иван Иванов"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
                     />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Телефон</label>
                     <input 
                       type="tel" 
-                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                       placeholder="+7 (___) ___-__-__"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      required
                     />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Сообщение</label>
                     <textarea 
                       rows={4}
-                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none bg-background"
                       placeholder="Расскажите о вашем проекте..."
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      required
                     />
                   </div>
-                  <Button type="submit" className="w-full">Отправить заявку</Button>
+                  
+                  {submitStatus === 'success' && (
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm flex items-center gap-2">
+                      <Icon name="CheckCircle" size={18} />
+                      <span>Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.</span>
+                    </div>
+                  )}
+                  
+                  {submitStatus === 'error' && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm flex items-center gap-2">
+                      <Icon name="XCircle" size={18} />
+                      <span>Ошибка отправки. Попробуйте позже или свяжитесь по телефону.</span>
+                    </div>
+                  )}
+                  
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        <Icon name="Loader2" size={18} className="animate-spin" />
+                        Отправка...
+                      </span>
+                    ) : (
+                      'Отправить заявку'
+                    )}
+                  </Button>
                 </form>
               </Card>
             </div>
