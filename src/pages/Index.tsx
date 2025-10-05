@@ -312,6 +312,100 @@ const Index = () => {
         </div>
       </section>
 
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Этапы работы</h2>
+            <p className="text-lg text-muted-foreground">
+              Простой и прозрачный процесс от заявки до получения техники
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <div className="space-y-6">
+              <Card className="p-6 hover:shadow-lg transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-lg">1</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">Заявка и консультация</h3>
+                    <p className="text-muted-foreground">
+                      Свяжитесь с нами любым удобным способом. Наши специалисты проконсультируют вас по подбору оборудования, техническим характеристикам и ценам.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="p-6 hover:shadow-lg transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-lg">2</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">Подбор оборудования</h3>
+                    <p className="text-muted-foreground">
+                      Изучаем ваши задачи и предлагаем оптимальные модели. Предоставляем детальные спецификации, фото и видео техники с завода.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="p-6 hover:shadow-lg transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-lg">3</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">Договор и оплата</h3>
+                    <p className="text-muted-foreground">
+                      Заключаем официальный договор поставки. Гибкие условия оплаты: предоплата, рассрочка, лизинг. Полное юридическое сопровождение.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="p-6 hover:shadow-lg transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-lg">4</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">Производство и отгрузка</h3>
+                    <p className="text-muted-foreground">
+                      Размещаем заказ на заводе. Контролируем производство и качество. Организуем доставку до вашего объекта или склада в РФ.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="p-6 hover:shadow-lg transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-lg">5</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">Доставка и пуско-наладка</h3>
+                    <p className="text-muted-foreground">
+                      Доставка техники в указанное место. При необходимости — пуско-наладочные работы, обучение персонала и гарантийное обслуживание.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+            
+            <div className="mt-12 text-center">
+              <p className="text-lg text-muted-foreground mb-6">
+                <span className="font-semibold text-foreground">Срок поставки:</span> от 30 до 45 дней с момента оплаты
+              </p>
+              <Button size="lg" onClick={() => scrollToSection('contact')}>
+                Начать сотрудничество
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="contact" className="py-20 bg-gradient-to-br from-primary/5 to-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
