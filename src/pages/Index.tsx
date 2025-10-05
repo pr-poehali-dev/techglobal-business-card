@@ -1,12 +1,35 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
+import { useEffect, useRef, useState } from "react";
 
 const Index = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute('data-index') || '0');
+            setVisibleCards((prev) => new Set([...prev, index]));
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const cards = document.querySelectorAll('[data-animate]');
+    cards.forEach((card) => observerRef.current?.observe(card));
+
+    return () => observerRef.current?.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -150,7 +173,11 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+            <Card 
+              className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-700 group ${visibleCards.has(0) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="0"
+            >
               <div className="relative overflow-hidden">
                 <img 
                   src="https://cdn.poehali.dev/files/dd352148-f30b-4be1-8f2a-ffadcb5790ba.jpeg" 
@@ -164,7 +191,11 @@ const Index = () => {
               </div>
             </Card>
             
-            <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+            <Card 
+              className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-700 group ${visibleCards.has(1) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="1"
+            >
               <div className="relative overflow-hidden">
                 <img 
                   src="https://cdn.poehali.dev/files/1e61a691-b34e-4b3a-85aa-cb911df07abd.jpeg" 
@@ -178,7 +209,11 @@ const Index = () => {
               </div>
             </Card>
             
-            <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+            <Card 
+              className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-700 group ${visibleCards.has(2) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="2"
+            >
               <div className="relative overflow-hidden">
                 <img 
                   src="https://cdn.poehali.dev/files/13d5ed32-c0ee-4458-913c-e4b93c72092e.jpeg" 
@@ -192,7 +227,11 @@ const Index = () => {
               </div>
             </Card>
             
-            <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+            <Card 
+              className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-700 group ${visibleCards.has(3) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="3"
+            >
               <div className="relative overflow-hidden">
                 <img 
                   src="https://cdn.poehali.dev/files/6a84bba9-a7c8-49b2-a49b-5ac925118c26.jpeg" 
@@ -206,7 +245,11 @@ const Index = () => {
               </div>
             </Card>
             
-            <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+            <Card 
+              className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-700 group ${visibleCards.has(4) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="4"
+            >
               <div className="relative overflow-hidden">
                 <img 
                   src="https://cdn.poehali.dev/files/cff960d3-bb8d-4972-b1a8-0d3414373563.jpeg" 
@@ -220,7 +263,11 @@ const Index = () => {
               </div>
             </Card>
             
-            <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow group">
+            <Card 
+              className={`overflow-hidden shadow-lg hover:shadow-xl transition-all duration-700 group ${visibleCards.has(5) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="5"
+            >
               <div className="relative overflow-hidden">
                 <img 
                   src="https://cdn.poehali.dev/files/8430ac0a-38db-4560-bb9f-63944e187cb4.png" 
@@ -247,7 +294,11 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <Card 
+              className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(10) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="10"
+            >
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Icon name="TrendingDown" className="text-primary" size={28} />
               </div>
@@ -257,7 +308,11 @@ const Index = () => {
               </p>
             </Card>
             
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <Card 
+              className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(11) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="11"
+            >
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Icon name="Award" className="text-primary" size={28} />
               </div>
@@ -267,7 +322,11 @@ const Index = () => {
               </p>
             </Card>
             
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <Card 
+              className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(12) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="12"
+            >
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Icon name="Zap" className="text-primary" size={28} />
               </div>
@@ -277,7 +336,11 @@ const Index = () => {
               </p>
             </Card>
             
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <Card 
+              className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(13) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="13"
+            >
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Icon name="Wrench" className="text-primary" size={28} />
               </div>
@@ -287,7 +350,11 @@ const Index = () => {
               </p>
             </Card>
             
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <Card 
+              className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(14) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="14"
+            >
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Icon name="Clock" className="text-primary" size={28} />
               </div>
@@ -297,7 +364,11 @@ const Index = () => {
               </p>
             </Card>
             
-            <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <Card 
+              className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(15) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+              data-animate
+              data-index="15"
+            >
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Icon name="CheckCircle" className="text-primary" size={28} />
               </div>
@@ -366,7 +437,11 @@ const Index = () => {
           
           <div className="max-w-4xl mx-auto">
             <div className="space-y-6">
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <Card 
+                className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(20) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                data-animate
+                data-index="20"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-lg">1</span>
@@ -380,7 +455,11 @@ const Index = () => {
                 </div>
               </Card>
               
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <Card 
+                className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(21) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                data-animate
+                data-index="21"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-lg">2</span>
@@ -394,7 +473,11 @@ const Index = () => {
                 </div>
               </Card>
               
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <Card 
+                className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(22) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                data-animate
+                data-index="22"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-lg">3</span>
@@ -408,7 +491,11 @@ const Index = () => {
                 </div>
               </Card>
               
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <Card 
+                className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(23) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                data-animate
+                data-index="23"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-lg">4</span>
@@ -422,7 +509,11 @@ const Index = () => {
                 </div>
               </Card>
               
-              <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <Card 
+                className={`p-6 shadow-lg hover:shadow-xl transition-all duration-700 ${visibleCards.has(24) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                data-animate
+                data-index="24"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-lg">5</span>
