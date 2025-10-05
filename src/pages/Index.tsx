@@ -219,6 +219,20 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Буровые установки для геологоразведки и строительства</p>
               </div>
             </Card>
+            
+            <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://cdn.poehali.dev/files/8430ac0a-38db-4560-bb9f-63944e187cb4.png" 
+                  alt="Генераторное оборудование" 
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Генераторное оборудование</h3>
+                <p className="text-sm text-muted-foreground">Дизельные генераторы и электростанции для промышленных объектов</p>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
@@ -423,24 +437,13 @@ const Index = () => {
               </Card>
             </div>
             
-            <div className="mt-12">
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div className="text-center md:text-left">
-                  <p className="text-lg text-muted-foreground mb-6">
-                    <span className="font-semibold text-foreground">Срок поставки:</span> от 30 дней с момента оплаты
-                  </p>
-                  <Button size="lg" onClick={() => scrollToSection('contact')}>
-                    Начать сотрудничество
-                  </Button>
-                </div>
-                <div className="rounded-lg overflow-hidden shadow-xl">
-                  <img 
-                    src="https://cdn.poehali.dev/files/8430ac0a-38db-4560-bb9f-63944e187cb4.png" 
-                    alt="Промышленное оборудование" 
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
-              </div>
+            <div className="mt-12 text-center">
+              <p className="text-lg text-muted-foreground mb-6">
+                <span className="font-semibold text-foreground">Срок поставки:</span> от 30 дней с момента оплаты
+              </p>
+              <Button size="lg" onClick={() => scrollToSection('contact')}>
+                Начать сотрудничество
+              </Button>
             </div>
           </div>
         </div>
