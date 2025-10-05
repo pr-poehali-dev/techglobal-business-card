@@ -16,7 +16,7 @@ const Index = () => {
             <img 
               src="https://cdn.poehali.dev/files/e029a36d-cb18-4895-a0a6-5d31dc75c0d4.png" 
               alt="ТехГлобал" 
-              className="h-10"
+              className="h-20"
             />
           </div>
           <nav className="hidden md:flex items-center gap-8">
@@ -52,7 +52,7 @@ const Index = () => {
               <img 
                 src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
                 alt="Спецтехника" 
-                className="rounded-lg shadow-2xl w-full"
+                className="rounded-lg shadow-2xl w-full scale-150 origin-center"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ const Index = () => {
             <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
               <div className="relative overflow-hidden">
                 <img 
-                  src="https://cdn.poehali.dev/files/9895b2e9-be08-424d-9f49-d8ec7fb53f76.jpg" 
+                  src="https://cdn.poehali.dev/files/13d5ed32-c0ee-4458-913c-e4b93c72092e.jpeg" 
                   alt="Строительная спецтехника" 
                   className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
