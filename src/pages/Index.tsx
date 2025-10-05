@@ -14,15 +14,14 @@ const Index = () => {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img 
-              src="/img/77ae2ee5-23ae-4904-bca3-7f237136c723.jpg" 
+              src="https://cdn.poehali.dev/files/e029a36d-cb18-4895-a0a6-5d31dc75c0d4.png" 
               alt="ТехГлобал" 
-              className="h-12 md:h-14 object-contain"
+              className="h-12 md:h-14"
             />
           </div>
           <nav className="hidden lg:flex items-center gap-6">
             <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
             <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
-            <button onClick={() => scrollToSection('advantages')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Условия</button>
             <button onClick={() => scrollToSection('gallery')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
             <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Контакты</button>
           </nav>
