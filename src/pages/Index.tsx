@@ -1,35 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
-import { useEffect, useState } from "react";
 
 const Index = () => {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-background relative">
-      <div className="fixed inset-0 z-0">
-        <img 
-          src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
-          alt="Фон" 
-          className="w-full h-full object-cover opacity-10"
-        />
-      </div>
-      <div className="relative z-10">
+    <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -51,14 +31,11 @@ const Index = () => {
       </header>
 
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0 parallax-bg"
-          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
-        >
+        <div className="absolute inset-0 z-0">
           <img 
             src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
             alt="Спецтехника" 
-            className="w-full h-[110%] object-cover animate-zoom-in"
+            className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
         </div>
@@ -613,7 +590,6 @@ const Index = () => {
         >
           <Icon name="Send" size={26} className="text-white" />
         </a>
-      </div>
       </div>
     </div>
   );
