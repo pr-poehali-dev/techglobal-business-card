@@ -33,7 +33,7 @@ const Index = () => {
       <section className="relative bg-gradient-to-br from-primary/5 via-background to-background py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            <div className="animate-fade-in order-2 lg:order-1">
+            <div className="animate-fade-in order-1 lg:order-1">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 lg:mb-6 leading-tight">
                 Поставка спецтехники и промышленного оборудования из КНР
               </h1>
@@ -49,7 +49,7 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <div className="animate-fade-in order-1 lg:order-2">
+            <div className="animate-fade-in order-2 lg:order-2">
               <img 
                 src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
                 alt="Спецтехника" 
