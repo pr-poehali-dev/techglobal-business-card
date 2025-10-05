@@ -148,7 +148,35 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://cdn.poehali.dev/files/dd352148-f30b-4be1-8f2a-ffadcb5790ba.jpeg" 
+                  alt="Дорожный каток XCMG" 
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Дорожная техника</h3>
+                <p className="text-sm text-muted-foreground">Катки, асфальтоукладчики и дорожно-строительное оборудование</p>
+              </div>
+            </Card>
+            
+            <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src="https://cdn.poehali.dev/files/1e61a691-b34e-4b3a-85aa-cb911df07abd.jpeg" 
+                  alt="Грузовой тягач JAC" 
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-2">Грузовая техника</h3>
+                <p className="text-sm text-muted-foreground">Тягачи, самосвалы и грузовики JAC, SHACMAN, FAW для логистики</p>
+              </div>
+            </Card>
+            
             <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
               <div className="relative overflow-hidden">
                 <img 
