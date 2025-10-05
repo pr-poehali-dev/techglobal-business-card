@@ -16,7 +16,8 @@ const Index = () => {
             <img 
               src="https://cdn.poehali.dev/files/768041b8-f02e-4039-ac01-4874e237eafe.png" 
               alt="TechGlobal" 
-              className="h-10 md:h-12 object-contain"
+              className="h-20 md:h-24 object-contain"
+              style={{ imageRendering: 'crisp-edges' }}
             />
           </div>
           <nav className="hidden lg:flex items-center gap-6">
