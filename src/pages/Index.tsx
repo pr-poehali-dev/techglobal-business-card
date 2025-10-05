@@ -20,7 +20,7 @@ const Index = () => {
               style={{ imageRendering: 'crisp-edges' }}
             />
           </div>
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6">
             <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
             <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
             <button onClick={() => scrollToSection('gallery')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
