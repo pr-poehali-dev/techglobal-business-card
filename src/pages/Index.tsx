@@ -194,6 +194,79 @@ const Index = () => {
         </div>
       </section>
 
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Преимущества китайской техники</h2>
+            <p className="text-lg text-muted-foreground">
+              Почему производители КНР — лучший выбор для вашего бизнеса
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="p-6 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="TrendingDown" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Цена ниже на 30-50%</h3>
+              <p className="text-muted-foreground">
+                По сравнению с европейскими и японскими аналогами при сопоставимом качестве и функционале
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="Award" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Мировое признание</h3>
+              <p className="text-muted-foreground">
+                Бренды XCMG, Sany, Zoomlion входят в топ-10 производителей строительной техники в мире
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="Zap" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Современные технологии</h3>
+              <p className="text-muted-foreground">
+                Передовые решения в электронике, автоматизации и экологичности двигателей
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="Wrench" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Доступность запчастей</h3>
+              <p className="text-muted-foreground">
+                Быстрая поставка оригинальных комплектующих и низкая стоимость обслуживания
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="Clock" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Быстрые сроки</h3>
+              <p className="text-muted-foreground">
+                Налаженная логистика позволяет доставить оборудование в течение 30-45 дней
+              </p>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-xl transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="CheckCircle" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Адаптация к РФ</h3>
+              <p className="text-muted-foreground">
+                Техника адаптирована к российским условиям эксплуатации и климату
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       <section id="advantages" className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
