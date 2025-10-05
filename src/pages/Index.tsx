@@ -1,12 +1,286 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import Icon from "@/components/ui/icon";
 
 const Index = () => {
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-border">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img 
+              src="https://cdn.poehali.dev/files/e029a36d-cb18-4895-a0a6-5d31dc75c0d4.png" 
+              alt="ТехГлобал" 
+              className="h-10"
+            />
+          </div>
+          <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors">О компании</button>
+            <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors">Услуги</button>
+            <button onClick={() => scrollToSection('advantages')} className="text-sm font-medium hover:text-primary transition-colors">Преимущества</button>
+            <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-primary transition-colors">Контакты</button>
+          </nav>
+          <Button onClick={() => scrollToSection('contact')}>Связаться</Button>
+        </div>
+      </header>
+
+      <section className="relative bg-gradient-to-br from-primary/5 via-background to-background py-20 md:py-32">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="animate-fade-in">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+                Поставка спецтехники и промышленного оборудования из КНР
+              </h1>
+              <p className="text-lg text-muted-foreground mb-8">
+                Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Button size="lg" onClick={() => scrollToSection('contact')}>
+                  Получить консультацию
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => scrollToSection('services')}>
+                  Узнать больше
+                </Button>
+              </div>
+            </div>
+            <div className="animate-fade-in">
+              <img 
+                src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
+                alt="Спецтехника" 
+                className="rounded-lg shadow-2xl w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">О компании ТехГлобал</h2>
+            <p className="text-lg text-muted-foreground">
+              Мы специализируемся на поставках спецтехники, промышленного оборудования и материалов напрямую от производителей из Китайской Народной Республики. За 10 лет работы мы реализовали множество крупных проектов и заслужили доверие наших клиентов.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="p-8 text-center hover:shadow-lg transition-shadow">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="Calendar" className="text-primary" size={32} />
+              </div>
+              <h3 className="text-5xl font-bold text-primary mb-2">10+</h3>
+              <p className="text-muted-foreground">лет на рынке</p>
+            </Card>
+            
+            <Card className="p-8 text-center hover:shadow-lg transition-shadow">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="TrendingUp" className="text-primary" size={32} />
+              </div>
+              <h3 className="text-5xl font-bold text-primary mb-2">100+</h3>
+              <p className="text-muted-foreground">реализованных проектов</p>
+            </Card>
+            
+            <Card className="p-8 text-center hover:shadow-lg transition-shadow">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="Handshake" className="text-primary" size={32} />
+              </div>
+              <h3 className="text-5xl font-bold text-primary mb-2">50+</h3>
+              <p className="text-muted-foreground">постоянных партнёров</p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section id="services" className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Наши услуги</h2>
+            <p className="text-lg text-muted-foreground">
+              Полный комплекс услуг по поставке и сопровождению оборудования
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="p-8 hover:shadow-lg transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="Truck" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Поставка спецтехники</h3>
+              <p className="text-muted-foreground">
+                Экскаваторы, бульдозеры, погрузчики, краны и другая строительная техника от ведущих китайских производителей
+              </p>
+            </Card>
+            
+            <Card className="p-8 hover:shadow-lg transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="Factory" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Промышленное оборудование</h3>
+              <p className="text-muted-foreground">
+                Станки, производственные линии, оборудование для различных отраслей промышленности
+              </p>
+            </Card>
+            
+            <Card className="p-8 hover:shadow-lg transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Icon name="Package" className="text-primary" size={28} />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Промышленные материалы</h3>
+              <p className="text-muted-foreground">
+                Комплектующие, расходные материалы и запасные части для промышленного оборудования
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section id="advantages" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Наши преимущества</h2>
+            <p className="text-lg text-muted-foreground">
+              Почему выбирают ТехГлобал
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="MapPin" className="text-primary" size={24} />
+              </div>
+              <h3 className="font-semibold mb-2">Прямые поставки</h3>
+              <p className="text-sm text-muted-foreground">От заводов-производителей без посредников</p>
+            </Card>
+            
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="DollarSign" className="text-primary" size={24} />
+              </div>
+              <h3 className="font-semibold mb-2">Выгодные цены</h3>
+              <p className="text-sm text-muted-foreground">Конкурентные условия благодаря прямым контрактам</p>
+            </Card>
+            
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="Shield" className="text-primary" size={24} />
+              </div>
+              <h3 className="font-semibold mb-2">Гарантия качества</h3>
+              <p className="text-sm text-muted-foreground">Работаем только с проверенными производителями</p>
+            </Card>
+            
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="Settings" className="text-primary" size={24} />
+              </div>
+              <h3 className="font-semibold mb-2">Гибкие условия</h3>
+              <p className="text-sm text-muted-foreground">Индивидуальный подход к каждому клиенту</p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="py-20 bg-gradient-to-br from-primary/5 to-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Свяжитесь с нами</h2>
+              <p className="text-lg text-muted-foreground">
+                Готовы ответить на ваши вопросы и обсудить условия сотрудничества
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card className="p-8">
+                <h3 className="text-xl font-semibold mb-6">Контактная информация</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="MapPin" className="text-primary" size={20} />
+                    </div>
+                    <div>
+                      <p className="font-medium mb-1">Адрес</p>
+                      <p className="text-sm text-muted-foreground">РФ, г. Южно-Сахалинск,<br />пер. Солнечный, д.9А, оф. 307</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="Phone" className="text-primary" size={20} />
+                    </div>
+                    <div>
+                      <p className="font-medium mb-1">Телефоны</p>
+                      <a href="tel:+79621250700" className="text-sm text-primary hover:underline block">+7 (962) 125-07-00</a>
+                      <a href="tel:+79959658000" className="text-sm text-primary hover:underline block">+7 (995) 965-80-00</a>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon name="Mail" className="text-primary" size={20} />
+                    </div>
+                    <div>
+                      <p className="font-medium mb-1">Email</p>
+                      <a href="mailto:sales@techglobal.ru" className="text-sm text-primary hover:underline">sales@techglobal.ru</a>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="p-8">
+                <h3 className="text-xl font-semibold mb-6">Отправить заявку</h3>
+                <form className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Ваше имя</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Иван Иванов"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Телефон</label>
+                    <input 
+                      type="tel" 
+                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="+7 (___) ___-__-__"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Сообщение</label>
+                    <textarea 
+                      rows={4}
+                      className="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                      placeholder="Расскажите о вашем проекте..."
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">Отправить заявку</Button>
+                </form>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-foreground text-white py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <img 
+                src="https://cdn.poehali.dev/files/e029a36d-cb18-4895-a0a6-5d31dc75c0d4.png" 
+                alt="ТехГлобал" 
+                className="h-8 brightness-0 invert"
+              />
+            </div>
+            <p className="text-sm text-white/80">© 2025 ТехГлобал. Все права защищены.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
