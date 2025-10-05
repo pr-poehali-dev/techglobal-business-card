@@ -11,35 +11,35 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img 
               src="https://cdn.poehali.dev/files/e029a36d-cb18-4895-a0a6-5d31dc75c0d4.png" 
               alt="ТехГлобал" 
-              className="h-20"
+              className="h-12 md:h-14"
             />
           </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors">О компании</button>
-            <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors">Услуги</button>
-            <button onClick={() => scrollToSection('gallery')} className="text-sm font-medium hover:text-primary transition-colors">Оборудование</button>
-            <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-primary transition-colors">Контакты</button>
+          <nav className="hidden lg:flex items-center gap-6">
+            <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
+            <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
+            <button onClick={() => scrollToSection('gallery')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
+            <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Контакты</button>
           </nav>
-          <Button onClick={() => scrollToSection('contact')}>Связаться</Button>
+          <Button onClick={() => scrollToSection('contact')} className="whitespace-nowrap">Связаться</Button>
         </div>
       </header>
 
-      <section className="relative bg-gradient-to-br from-primary/5 via-background to-background py-20 md:py-32">
+      <section className="relative bg-gradient-to-br from-primary/5 via-background to-background py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-in">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div className="animate-fade-in order-2 lg:order-1">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 lg:mb-6 leading-tight">
                 Поставка спецтехники и промышленного оборудования из КНР
               </h1>
-              <p className="text-lg text-muted-foreground mb-8">
+              <p className="text-base md:text-lg text-muted-foreground mb-6 lg:mb-8">
                 Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-3 lg:gap-4">
                 <Button size="lg" onClick={() => scrollToSection('contact')}>
                   Получить консультацию
                 </Button>
@@ -48,11 +48,11 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <div className="animate-fade-in">
+            <div className="animate-fade-in order-1 lg:order-2">
               <img 
                 src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
                 alt="Спецтехника" 
-                className="rounded-lg shadow-2xl w-full scale-150 origin-center"
+                className="rounded-lg shadow-2xl w-full h-auto object-contain"
               />
             </div>
           </div>
