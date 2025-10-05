@@ -30,31 +30,31 @@ const Index = () => {
         </div>
       </header>
 
-      <section className="relative bg-gradient-to-br from-primary/5 via-background to-background py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            <div className="animate-fade-in order-1 lg:order-1">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 lg:mb-6 leading-tight">
-                Поставка спецтехники и промышленного оборудования из КНР
-              </h1>
-              <p className="text-base md:text-lg text-muted-foreground mb-6 lg:mb-8">
-                Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
-              </p>
-              <div className="flex flex-wrap gap-3 lg:gap-4">
-                <Button size="lg" onClick={() => scrollToSection('contact')}>
-                  Получить консультацию
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => scrollToSection('services')}>
-                  Узнать больше
-                </Button>
-              </div>
-            </div>
-            <div className="animate-fade-in order-2 lg:order-2">
-              <img 
-                src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
-                alt="Спецтехника" 
-                className="rounded-lg shadow-2xl w-full h-auto object-contain"
-              />
+      <section className="relative h-[90vh] flex items-center justify-center">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
+            alt="Спецтехника" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 z-10 text-center max-w-5xl">
+          <div className="animate-fade-in">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Поставка спецтехники и промышленного оборудования из КНР
+            </h1>
+            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+              Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button size="lg" onClick={() => scrollToSection('contact')} className="bg-white text-primary hover:bg-white/90">
+                Получить консультацию
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => scrollToSection('services')} className="border-white text-white hover:bg-white/10">
+                Узнать больше
+              </Button>
             </div>
           </div>
         </div>
