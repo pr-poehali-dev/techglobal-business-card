@@ -14,7 +14,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img 
-              src="https://cdn.poehali.dev/files/768041b8-f02e-4039-ac01-4874e237eafe.png" 
+              src="https://cdn.poehali.dev/files/8450d322-4b63-4ea5-ba3f-3031f46cc14a.jpg" 
               alt="TechGlobal" 
               className="h-14 md:h-16 object-contain"
               style={{ imageRendering: 'crisp-edges' }}
