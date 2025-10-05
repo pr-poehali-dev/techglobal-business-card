@@ -33,10 +33,10 @@ const Index = () => {
             />
           </div>
           <nav className="hidden md:flex items-center gap-4 lg:gap-6">
-            <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
-            <button onClick={() => scrollToSection('services')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
-            <button onClick={() => scrollToSection('gallery')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
-            <button onClick={() => scrollToSection('contact')} className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap">Контакты</button>
+            <button onClick={() => scrollToSection('about')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
+            <button onClick={() => scrollToSection('services')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
+            <button onClick={() => scrollToSection('gallery')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
+            <button onClick={() => scrollToSection('contact')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Контакты</button>
           </nav>
           <Button onClick={() => scrollToSection('contact')} className="whitespace-nowrap">Связаться</Button>
         </div>
@@ -64,10 +64,10 @@ const Index = () => {
               Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
             </p>
             <div className="flex flex-wrap gap-4 justify-center animate-slide-up">
-              <Button size="lg" onClick={() => scrollToSection('contact')} className="bg-white text-primary hover:bg-white/90 hover:scale-105 transition-transform">
+              <Button size="lg" onClick={() => scrollToSection('contact')} className="bg-primary text-white hover:bg-primary/90 hover:scale-105 transition-transform shadow-lg">
                 Получить консультацию
               </Button>
-              <Button size="lg" variant="outline" onClick={() => scrollToSection('services')} className="border-white text-white hover:bg-white/10 hover:scale-105 transition-transform">
+              <Button size="lg" variant="outline" onClick={() => scrollToSection('services')} className="border-2 border-white bg-white/10 backdrop-blur text-white hover:bg-white/20 hover:scale-105 transition-transform shadow-lg">
                 Узнать больше
               </Button>
             </div>
