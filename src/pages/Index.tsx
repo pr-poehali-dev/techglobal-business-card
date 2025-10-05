@@ -284,6 +284,30 @@ const Index = () => {
                       <a href="mailto:sales@techglobal.ru" className="text-sm text-primary hover:underline">sales@techglobal.ru</a>
                     </div>
                   </div>
+                  
+                  <div className="pt-4 border-t border-border">
+                    <p className="font-medium mb-3">Мессенджеры</p>
+                    <div className="flex gap-3">
+                      <a 
+                        href="https://wa.me/79621250700" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-lg transition-colors text-sm font-medium"
+                      >
+                        <Icon name="MessageCircle" size={18} />
+                        WhatsApp
+                      </a>
+                      <a 
+                        href="https://t.me/79621250700" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-lg transition-colors text-sm font-medium"
+                      >
+                        <Icon name="Send" size={18} />
+                        Telegram
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </Card>
               
@@ -336,6 +360,27 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+        <a 
+          href="https://wa.me/79621250700" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="w-14 h-14 bg-[#25D366] hover:bg-[#20BD5A] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110"
+          aria-label="Написать в WhatsApp"
+        >
+          <Icon name="MessageCircle" size={28} className="text-white" />
+        </a>
+        <a 
+          href="https://t.me/79621250700" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="w-14 h-14 bg-[#0088cc] hover:bg-[#0077b5] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110"
+          aria-label="Написать в Telegram"
+        >
+          <Icon name="Send" size={26} className="text-white" />
+        </a>
+      </div>
     </div>
   );
 };
