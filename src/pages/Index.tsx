@@ -1,8 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: 'smooth' });
@@ -30,12 +42,15 @@ const Index = () => {
         </div>
       </header>
 
-      <section className="relative h-[90vh] flex items-center justify-center">
-        <div className="absolute inset-0 z-0">
+      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+        <div 
+          className="absolute inset-0 z-0 parallax-bg"
+          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
+        >
           <img 
             src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
             alt="Спецтехника" 
-            className="w-full h-full object-cover"
+            className="w-full h-[110%] object-cover animate-zoom-in"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
         </div>
@@ -45,14 +60,14 @@ const Index = () => {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Поставка спецтехники и промышленного оборудования из КНР
             </h1>
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto animate-slide-up">
               Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" onClick={() => scrollToSection('contact')} className="bg-white text-primary hover:bg-white/90">
+            <div className="flex flex-wrap gap-4 justify-center animate-slide-up">
+              <Button size="lg" onClick={() => scrollToSection('contact')} className="bg-white text-primary hover:bg-white/90 hover:scale-105 transition-transform">
                 Получить консультацию
               </Button>
-              <Button size="lg" variant="outline" onClick={() => scrollToSection('services')} className="border-white text-white hover:bg-white/10">
+              <Button size="lg" variant="outline" onClick={() => scrollToSection('services')} className="border-white text-white hover:bg-white/10 hover:scale-105 transition-transform">
                 Узнать больше
               </Button>
             </div>
