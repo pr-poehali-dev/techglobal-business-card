@@ -21,7 +21,15 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <div className="fixed inset-0 z-0">
+        <img 
+          src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
+          alt="Фон" 
+          className="w-full h-full object-cover opacity-10"
+        />
+      </div>
+      <div className="relative z-10">
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -64,10 +72,10 @@ const Index = () => {
               Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
             </p>
             <div className="flex flex-wrap gap-4 justify-center animate-slide-up">
-              <Button size="lg" onClick={() => scrollToSection('contact')} className="bg-primary text-white hover:bg-primary/90 hover:scale-105 transition-transform shadow-lg">
+              <Button size="lg" onClick={() => scrollToSection('contact')} className="bg-white text-primary hover:bg-white/90 hover:scale-105 transition-transform shadow-lg">
                 Получить консультацию
               </Button>
-              <Button size="lg" variant="outline" onClick={() => scrollToSection('services')} className="border-2 border-white bg-white/10 backdrop-blur text-white hover:bg-white/20 hover:scale-105 transition-transform shadow-lg">
+              <Button size="lg" onClick={() => scrollToSection('services')} className="bg-white text-primary hover:bg-white/90 hover:scale-105 transition-transform shadow-lg">
                 Узнать больше
               </Button>
             </div>
@@ -605,6 +613,7 @@ const Index = () => {
         >
           <Icon name="Send" size={26} className="text-white" />
         </a>
+      </div>
       </div>
     </div>
   );
