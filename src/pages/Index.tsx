@@ -3,6 +3,7 @@ import Header from "@/components/sections/Header";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ServicesSection from "@/components/sections/ServicesSection";
+import EquipmentSection from "@/components/sections/EquipmentSection";
 import GallerySection from "@/components/sections/GallerySection";
 import AdvantagesSection from "@/components/sections/AdvantagesSection";
 import OurAdvantagesSection from "@/components/sections/OurAdvantagesSection";
@@ -109,6 +110,7 @@ const Index = () => {
       <HeroSection scrollY={scrollY} scrollToSection={scrollToSection} />
       <AboutSection />
       <ServicesSection />
+      <EquipmentSection />
       <GallerySection visibleCards={visibleCards} />
       <AdvantagesSection visibleCards={visibleCards} />
       <OurAdvantagesSection />
