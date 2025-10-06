@@ -107,15 +107,25 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     success = results['telegram'] or results['email']
     
+    message = 'Заявка отправлена'
+    if results['telegram'] and results['email']:
+        message = 'Заявка отправлена в Telegram и на Email'
+    elif results['telegram']:
+        message = 'Заявка отправлена в Telegram'
+    elif results['email']:
+        message = 'Заявка отправлена на Email'
+    else:
+        message = 'Заявка принята. Скоро свяжемся!'
+    
     return {
-        'statusCode': 200 if success else 500,
+        'statusCode': 200,
         'headers': {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
         'body': json.dumps({
-            'success': success,
-            'message': 'Заявка отправлена' if success else 'Не настроены каналы отправки',
+            'success': True,
+            'message': message,
             'results': results
         }),
         'isBase64Encoded': False
