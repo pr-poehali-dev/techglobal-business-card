@@ -43,7 +43,7 @@ const ContactSection = ({
                   </div>
                   <div>
                     <p className="font-medium mb-1">Address</p>
-                    <p className="text-sm text-muted-foreground">Hong Kong, Kowloon,<br />Nathan Road, 123</p>
+                    <p className="text-sm text-muted-foreground">15/F Radio City 505 Hennesy Road<br />Causeway Bay, Hong Kong</p>
                   </div>
                 </div>
                 
@@ -53,8 +53,7 @@ const ContactSection = ({
                   </div>
                   <div>
                     <p className="font-medium mb-1">Phone</p>
-                    <a href="tel:+79621250700" className="text-sm text-primary hover:underline block">+7 (962) 125-07-00</a>
-                    <a href="tel:+79959658000" className="text-sm text-primary hover:underline block">+7 (995) 965-80-00</a>
+                    <a href="tel:+8613165540208" className="text-sm text-primary hover:underline block">+86 131 6554 0208</a>
                   </div>
                 </div>
                 
@@ -72,7 +71,7 @@ const ContactSection = ({
                   <p className="font-medium mb-3">Messengers</p>
                   <div className="flex gap-3">
                     <a 
-                      href="https://wa.me/79621250700" 
+                      href="https://wa.me/8613165540208" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-4 py-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-lg transition-colors text-sm font-medium"
@@ -81,7 +80,7 @@ const ContactSection = ({
                       WhatsApp
                     </a>
                     <a 
-                      href="https://t.me/79621250700" 
+                      href="https://t.me/8613165540208" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-4 py-2 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-lg transition-colors text-sm font-medium"
