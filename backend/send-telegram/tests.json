@@ -1,0 +1,25 @@
+{
+  "tests": [
+    {
+      "name": "Успешная отправка заявки",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "name": "Иван Тестов",
+        "phone": "+7 (900) 123-45-67",
+        "message": "Хочу заказать интеграцию систем"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "OPTIONS запрос для CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}

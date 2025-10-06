@@ -15,14 +15,26 @@ const Index = () => {
     setSubmitStatus('idle');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      setSubmitStatus('success');
-      setFormData({ name: '', phone: '', message: '' });
-      
-      setTimeout(() => {
-        setSubmitStatus('idle');
-      }, 5000);
+      const response = await fetch('https://functions.poehali.dev/74de5df1-46e2-4db6-a4c4-582b30130ecb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({ name: '', phone: '', message: '' });
+        
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 5000);
+      } else {
+        setSubmitStatus('error');
+      }
     } catch (error) {
       setSubmitStatus('error');
     } finally {
