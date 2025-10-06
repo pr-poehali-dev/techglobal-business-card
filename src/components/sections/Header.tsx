@@ -1,0 +1,31 @@
+import { Button } from "@/components/ui/button";
+
+interface HeaderProps {
+  scrollToSection: (id: string) => void;
+}
+
+const Header = ({ scrollToSection }: HeaderProps) => {
+  return (
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-border">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <img 
+            src="https://cdn.poehali.dev/files/f0e9eaf0-f813-41a1-bd09-80829adf3b3e.png" 
+            alt="TechGlobal" 
+            className="h-14 md:h-16 object-contain"
+            style={{ imageRendering: 'crisp-edges' }}
+          />
+        </div>
+        <nav className="hidden md:flex items-center gap-4 lg:gap-6">
+          <button onClick={() => scrollToSection('about')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
+          <button onClick={() => scrollToSection('services')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
+          <button onClick={() => scrollToSection('gallery')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
+          <button onClick={() => scrollToSection('contact')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Контакты</button>
+        </nav>
+        <Button onClick={() => scrollToSection('contact')} className="whitespace-nowrap">Связаться</Button>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
