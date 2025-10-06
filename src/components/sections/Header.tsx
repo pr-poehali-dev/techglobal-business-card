@@ -46,39 +46,49 @@ const Header = ({ scrollToSection }: HeaderProps) => {
         </div>
       </div>
 
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-white">
-          <nav className="container mx-auto px-4 py-4 flex flex-col gap-3">
-            <button 
-              onClick={() => handleMenuClick('about')} 
-              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
-            >
-              О компании
-            </button>
-            <button 
-              onClick={() => handleMenuClick('services')} 
-              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
-            >
-              Услуги
-            </button>
-            <button 
-              onClick={() => handleMenuClick('gallery')} 
-              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
-            >
-              Оборудование
-            </button>
-            <button 
-              onClick={() => handleMenuClick('contact')} 
-              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
-            >
-              Контакты
-            </button>
-            <Button onClick={() => handleMenuClick('contact')} className="w-full mt-2">
-              Связаться
-            </Button>
-          </nav>
-        </div>
-      )}
+      <div 
+        className={`md:hidden border-t border-border bg-white overflow-hidden transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <nav className="container mx-auto px-4 py-4 flex flex-col gap-3">
+          <button 
+            onClick={() => handleMenuClick('about')} 
+            className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
+            style={{ animationDelay: '50ms' }}
+          >
+            О компании
+          </button>
+          <button 
+            onClick={() => handleMenuClick('services')} 
+            className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
+            style={{ animationDelay: '100ms' }}
+          >
+            Услуги
+          </button>
+          <button 
+            onClick={() => handleMenuClick('gallery')} 
+            className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
+            style={{ animationDelay: '150ms' }}
+          >
+            Оборудование
+          </button>
+          <button 
+            onClick={() => handleMenuClick('contact')} 
+            className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
+            style={{ animationDelay: '200ms' }}
+          >
+            Контакты
+          </button>
+          <Button 
+            onClick={() => handleMenuClick('contact')} 
+            className="w-full mt-2 animate-in slide-in-from-top-2 duration-300"
+            style={{ animationDelay: '250ms' }}
+          >
+            Связаться
+          </Button>
+        </nav>
+      </div>
     </header>
   );
 };
