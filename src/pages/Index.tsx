@@ -35,7 +35,7 @@ const Index = () => {
         fileName = selectedFile.name;
       }
 
-      const response = await fetch('https://functions.poehali.dev/74de5df1-46e2-4db6-a4c4-582b30130ecb', {
+      const response = await fetch('https://functions.poehali.dev/8c7c76e3-ebf6-4218-b8b2-4d00a0f3ccfc', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
