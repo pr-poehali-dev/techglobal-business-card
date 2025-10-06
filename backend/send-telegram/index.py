@@ -12,6 +12,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
           context - объект с атрибутами request_id, function_name
     Returns: HTTP response dict с результатом отправки
     '''
+    print(f"Request received: {event.get('httpMethod')}")
     method: str = event.get('httpMethod', 'GET')
     
     if method == 'OPTIONS':
@@ -40,6 +41,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
     chat_id = os.environ.get('TELEGRAM_CHAT_ID')
+    
+    print(f"Bot token exists: {bool(bot_token)}, Chat ID exists: {bool(chat_id)}")
 
     if not bot_token or not chat_id:
         return {
@@ -48,7 +51,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            'body': json.dumps({'error': 'Telegram не настроен'}),
+            'body': json.dumps({'error': 'Telegram не настроен', 'details': f'token={bool(bot_token)}, chat_id={bool(chat_id)}'}),
             'isBase64Encoded': False
         }
 
