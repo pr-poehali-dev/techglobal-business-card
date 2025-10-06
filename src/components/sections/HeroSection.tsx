@@ -13,7 +13,6 @@ const HeroSection = ({ scrollY, scrollToSection }: HeroSectionProps) => {
           src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
           alt="Спецтехника" 
           className="w-full h-full object-cover"
-          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
       </div>
