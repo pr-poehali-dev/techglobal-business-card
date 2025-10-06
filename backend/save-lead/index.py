@@ -2,10 +2,11 @@ import json
 import os
 from typing import Dict, Any
 from datetime import datetime
+import psycopg2
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: Сохранение заявок — отправка в Telegram и Email
+    Business: Сохранение заявок в БД, отправка в Telegram и Email
     Args: event - dict с httpMethod, body (name, phone, message, file)
           context - объект с атрибутами request_id, function_name
     Returns: HTTP response dict с результатом
@@ -40,8 +41,29 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     name = form_data.get('name', '')
     phone = form_data.get('phone', '')
     message = form_data.get('message', '')
+    file_name = form_data.get('fileName', '')
     
-    results = {'telegram': False, 'email': False, 'errors': []}
+    results = {'database': False, 'telegram': False, 'email': False, 'errors': []}
+    
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url:
+        try:
+            conn = psycopg2.connect(db_url)
+            cur = conn.cursor()
+            
+            ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '')
+            user_agent = event.get('headers', {}).get('user-agent', '')
+            
+            cur.execute(
+                "INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (%s, %s, %s, %s, %s, %s)",
+                (name, phone, message or None, file_name or None, ip_address, user_agent)
+            )
+            conn.commit()
+            cur.close()
+            conn.close()
+            results['database'] = True
+        except Exception as e:
+            results['errors'].append(f'Database: {str(e)}')
     
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
     chat_id = os.environ.get('TELEGRAM_CHAT_ID')
