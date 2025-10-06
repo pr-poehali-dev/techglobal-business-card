@@ -15,12 +15,28 @@ const Index = () => {
     setSubmitStatus('idle');
 
     try {
+      let fileBase64 = '';
+      let fileName = '';
+      
+      if (selectedFile) {
+        const reader = new FileReader();
+        fileBase64 = await new Promise<string>((resolve) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(selectedFile);
+        });
+        fileName = selectedFile.name;
+      }
+
       const response = await fetch('https://functions.poehali.dev/74de5df1-46e2-4db6-a4c4-582b30130ecb', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          file: fileBase64,
+          fileName: fileName
+        })
       });
 
       const result = await response.json();
@@ -28,6 +44,7 @@ const Index = () => {
       if (response.ok) {
         setSubmitStatus('success');
         setFormData({ name: '', phone: '', message: '' });
+        setSelectedFile(null);
         
         setTimeout(() => {
           setSubmitStatus('idle');
@@ -46,6 +63,7 @@ const Index = () => {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [scrollY, setScrollY] = useState(0);
   const [formData, setFormData] = useState({ name: '', phone: '', message: '' });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -694,6 +712,37 @@ const Index = () => {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       required
                     />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Прикрепить файл (не обязательно)</label>
+                    <div className="relative">
+                      <input 
+                        type="file" 
+                        id="file-upload"
+                        className="hidden"
+                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                      />
+                      <label 
+                        htmlFor="file-upload"
+                        className="w-full px-4 py-3 border border-input rounded-lg flex items-center gap-3 cursor-pointer hover:bg-accent transition-colors bg-background"
+                      >
+                        <Icon name="Paperclip" size={20} className="text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          {selectedFile ? selectedFile.name : 'Выберите файл (PDF, DOC, JPG, PNG)'}
+                        </span>
+                      </label>
+                      {selectedFile && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedFile(null)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          <Icon name="X" size={18} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                   
                   {submitStatus === 'success' && (

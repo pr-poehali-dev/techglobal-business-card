@@ -1,5 +1,6 @@
 import json
 import os
+import base64
 from typing import Dict, Any
 from urllib import request, error
 from datetime import datetime
@@ -78,6 +79,39 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         with request.urlopen(req) as response:
             result = json.loads(response.read().decode('utf-8'))
+        
+        file_data = form_data.get('file', '')
+        file_name = form_data.get('fileName', '')
+        
+        if file_data and file_name:
+            file_base64 = file_data.split(',')[1] if ',' in file_data else file_data
+            file_bytes = base64.b64decode(file_base64)
+            
+            boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW'
+            body_parts = []
+            body_parts.append(f'--{boundary}'.encode())
+            body_parts.append(f'Content-Disposition: form-data; name="chat_id"\r\n'.encode())
+            body_parts.append(f'{chat_id}\r\n'.encode())
+            body_parts.append(f'--{boundary}'.encode())
+            body_parts.append(f'Content-Disposition: form-data; name="document"; filename="{file_name}"\r\n'.encode())
+            body_parts.append(b'Content-Type: application/octet-stream\r\n\r\n')
+            body_parts.append(file_bytes)
+            body_parts.append(f'\r\n--{boundary}--\r\n'.encode())
+            
+            multipart_body = b'\r\n'.join(body_parts)
+            
+            file_url = f'https://api.telegram.org/bot{bot_token}/sendDocument'
+            file_req = request.Request(
+                file_url,
+                data=multipart_body,
+                headers={
+                    'Content-Type': f'multipart/form-data; boundary={boundary}'
+                },
+                method='POST'
+            )
+            
+            with request.urlopen(file_req) as file_response:
+                pass
             
         return {
             'statusCode': 200,
