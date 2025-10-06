@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   scrollToSection: (id: string) => void;
@@ -34,6 +35,12 @@ const Header = ({ scrollToSection }: HeaderProps) => {
         </nav>
         
         <div className="flex items-center gap-3">
+          <Link to="/en">
+            <Button variant="outline" size="sm" className="hidden md:inline-flex gap-2">
+              <Icon name="Globe" size={16} />
+              EN
+            </Button>
+          </Link>
           <Button onClick={() => scrollToSection('contact')} className="hidden md:inline-flex whitespace-nowrap">Связаться</Button>
           
           <button
@@ -80,10 +87,20 @@ const Header = ({ scrollToSection }: HeaderProps) => {
           >
             Контакты
           </button>
+          <Link to="/en" className="w-full">
+            <Button 
+              variant="outline"
+              className="w-full animate-in slide-in-from-top-2 duration-300 gap-2"
+              style={{ animationDelay: '250ms' }}
+            >
+              <Icon name="Globe" size={16} />
+              English
+            </Button>
+          </Link>
           <Button 
             onClick={() => handleMenuClick('contact')} 
-            className="w-full mt-2 animate-in slide-in-from-top-2 duration-300"
-            style={{ animationDelay: '250ms' }}
+            className="w-full animate-in slide-in-from-top-2 duration-300"
+            style={{ animationDelay: '300ms' }}
           >
             Связаться
           </Button>

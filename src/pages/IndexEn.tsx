@@ -10,8 +10,13 @@ import WorkflowSection from "@/components/sections/en/WorkflowSection";
 import ContactSection from "@/components/sections/en/ContactSection";
 import Footer from "@/components/sections/en/Footer";
 import FloatingButtons from "@/components/sections/en/FloatingButtons";
+import { updateMetaTags } from "@/utils/updateMetaTags";
 
 const IndexEn = () => {
+  useEffect(() => {
+    updateMetaTags('en');
+  }, []);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: 'smooth' });
