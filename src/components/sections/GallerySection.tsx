@@ -22,8 +22,8 @@ const GallerySection = ({ visibleCards }: GallerySectionProps) => {
     },
     {
       index: 2,
-      image: "https://cdn.poehali.dev/files/13d5ed32-c0ee-4458-913c-e4b93c72092e.jpeg",
-      alt: "Строительная спецтехника",
+      image: "https://cdn.poehali.dev/files/04c933b4-21d2-4676-9c16-78664b1bdc0f.jpeg",
+      alt: "Погрузчик LiuGong",
       title: "Строительная техника",
       description: "Экскаваторы, бульдозеры, погрузчики для любых строительных задач"
     },
