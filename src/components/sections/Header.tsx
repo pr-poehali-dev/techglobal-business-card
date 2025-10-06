@@ -1,10 +1,19 @@
 import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
+import { useState } from "react";
 
 interface HeaderProps {
   scrollToSection: (id: string) => void;
 }
 
 const Header = ({ scrollToSection }: HeaderProps) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleMenuClick = (id: string) => {
+    scrollToSection(id);
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-border">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
@@ -16,14 +25,60 @@ const Header = ({ scrollToSection }: HeaderProps) => {
             style={{ imageRendering: 'crisp-edges' }}
           />
         </div>
+        
         <nav className="hidden md:flex items-center gap-4 lg:gap-6">
           <button onClick={() => scrollToSection('about')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
           <button onClick={() => scrollToSection('services')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
           <button onClick={() => scrollToSection('gallery')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
           <button onClick={() => scrollToSection('contact')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Контакты</button>
         </nav>
-        <Button onClick={() => scrollToSection('contact')} className="whitespace-nowrap">Связаться</Button>
+        
+        <div className="flex items-center gap-3">
+          <Button onClick={() => scrollToSection('contact')} className="hidden md:inline-flex whitespace-nowrap">Связаться</Button>
+          
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 hover:bg-accent rounded-lg transition-colors"
+            aria-label="Меню"
+          >
+            <Icon name={isMobileMenuOpen ? "X" : "Menu"} size={24} />
+          </button>
+        </div>
       </div>
+
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-white">
+          <nav className="container mx-auto px-4 py-4 flex flex-col gap-3">
+            <button 
+              onClick={() => handleMenuClick('about')} 
+              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
+            >
+              О компании
+            </button>
+            <button 
+              onClick={() => handleMenuClick('services')} 
+              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
+            >
+              Услуги
+            </button>
+            <button 
+              onClick={() => handleMenuClick('gallery')} 
+              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
+            >
+              Оборудование
+            </button>
+            <button 
+              onClick={() => handleMenuClick('contact')} 
+              className="text-left text-lg font-medium hover:text-primary transition-colors py-2"
+            >
+              Контакты
+            </button>
+            <Button onClick={() => handleMenuClick('contact')} className="w-full mt-2">
+              Связаться
+            </Button>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
