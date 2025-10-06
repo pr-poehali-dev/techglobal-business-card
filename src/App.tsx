@@ -13,7 +13,10 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const hostname = window.location.hostname;
-  const isEnglishSite = hostname.includes('tgtradehk.com');
+  const urlParams = new URLSearchParams(window.location.search);
+  const langParam = urlParams.get('lang');
+  
+  const isEnglishSite = hostname.includes('tgtradehk.com') || langParam === 'en';
   
   return (
     <QueryClientProvider client={queryClient}>
