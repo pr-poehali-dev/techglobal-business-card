@@ -25,7 +25,7 @@ const AboutSection = () => {
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Icon name="TrendingUp" className="text-primary" size={32} />
             </div>
-            <h3 className="text-5xl font-bold text-primary mb-2">30+</h3>
+            <h3 className="text-5xl font-bold text-primary mb-2">50+</h3>
             <p className="text-muted-foreground">完成项目</p>
           </Card>
           
@@ -33,8 +33,8 @@ const AboutSection = () => {
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Icon name="Handshake" className="text-primary" size={32} />
             </div>
-            <h3 className="text-5xl font-bold text-primary mb-2">20+</h3>
-            <p className="text-muted-foreground">可靠合作伙伴</p>
+            <h3 className="text-5xl font-bold text-primary mb-2">3+</h3>
+            <p className="text-muted-foreground">长期客户</p>
           </Card>
         </div>
       </div>
