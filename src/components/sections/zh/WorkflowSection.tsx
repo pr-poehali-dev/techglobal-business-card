@@ -1,12 +1,36 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect, useRef } from "react";
 
-interface WorkflowSectionProps {
-  visibleCards: Set<number>;
-  scrollToSection: (id: string) => void;
-}
+const WorkflowSection = () => {
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-const WorkflowSection = ({ visibleCards, scrollToSection }: WorkflowSectionProps) => {
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute('data-index') || '0');
+            setVisibleCards(prev => new Set(prev).add(index));
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const cards = document.querySelectorAll('[data-animate]');
+    cards.forEach(card => observerRef.current?.observe(card));
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
   const steps = [
     {
       index: 20,

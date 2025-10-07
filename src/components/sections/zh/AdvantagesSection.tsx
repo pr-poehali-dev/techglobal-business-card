@@ -1,11 +1,31 @@
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
+import { useState, useEffect, useRef } from "react";
 
-interface AdvantagesSectionProps {
-  visibleCards: Set<number>;
-}
+const AdvantagesSection = () => {
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-const AdvantagesSection = ({ visibleCards }: AdvantagesSectionProps) => {
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute('data-index') || '0');
+            setVisibleCards(prev => new Set(prev).add(index));
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const cards = document.querySelectorAll('[data-animate]');
+    cards.forEach(card => observerRef.current?.observe(card));
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, []);
   const advantages = [
     {
       index: 10,
