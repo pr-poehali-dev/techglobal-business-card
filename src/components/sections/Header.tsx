@@ -35,12 +35,18 @@ const Header = ({ scrollToSection }: HeaderProps) => {
         </nav>
         
         <div className="flex items-center gap-3">
-          <Link to="/en">
-            <Button variant="outline" size="sm" className="hidden md:inline-flex gap-2">
-              <Icon name="Globe" size={16} />
-              EN
-            </Button>
-          </Link>
+          <div className="hidden md:flex gap-2">
+            <Link to="/en">
+              <Button variant="outline" size="sm" className="gap-2">
+                EN
+              </Button>
+            </Link>
+            <Link to="/zh">
+              <Button variant="outline" size="sm" className="gap-2">
+                中文
+              </Button>
+            </Link>
+          </div>
           <Button onClick={() => scrollToSection('contact')} className="hidden md:inline-flex whitespace-nowrap">Связаться</Button>
           
           <button
@@ -87,16 +93,28 @@ const Header = ({ scrollToSection }: HeaderProps) => {
           >
             Контакты
           </button>
-          <Link to="/en" className="w-full">
-            <Button 
-              variant="outline"
-              className="w-full animate-in slide-in-from-top-2 duration-300 gap-2"
-              style={{ animationDelay: '250ms' }}
-            >
-              <Icon name="Globe" size={16} />
-              English
-            </Button>
-          </Link>
+          <div className="flex gap-2 w-full">
+            <Link to="/en" className="flex-1">
+              <Button 
+                variant="outline"
+                className="w-full animate-in slide-in-from-top-2 duration-300 gap-2"
+                style={{ animationDelay: '250ms' }}
+              >
+                <Icon name="Globe" size={16} />
+                English
+              </Button>
+            </Link>
+            <Link to="/zh" className="flex-1">
+              <Button 
+                variant="outline"
+                className="w-full animate-in slide-in-from-top-2 duration-300 gap-2"
+                style={{ animationDelay: '275ms' }}
+              >
+                <Icon name="Globe" size={16} />
+                中文
+              </Button>
+            </Link>
+          </div>
           <Button 
             onClick={() => handleMenuClick('contact')} 
             className="w-full animate-in slide-in-from-top-2 duration-300"

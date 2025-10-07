@@ -28,26 +28,20 @@ const Header = ({ scrollToSection }: HeaderProps) => {
         </div>
         
         <nav className="hidden md:flex items-center gap-4 lg:gap-6">
-          <button onClick={() => scrollToSection('about')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">About</button>
-          <button onClick={() => scrollToSection('services')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Services</button>
-          <button onClick={() => scrollToSection('gallery')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Equipment</button>
-          <button onClick={() => scrollToSection('contact')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Contact</button>
+          <button onClick={() => scrollToSection('about')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">关于我们</button>
+          <button onClick={() => scrollToSection('services')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">服务项目</button>
+          <button onClick={() => scrollToSection('gallery')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">设备展示</button>
+          <button onClick={() => scrollToSection('contact')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">联系我们</button>
         </nav>
         
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex gap-2">
-            <Link to="/">
-              <Button variant="outline" size="sm" className="gap-2">
-                RU
-              </Button>
-            </Link>
-            <Link to="/zh">
-              <Button variant="outline" size="sm" className="gap-2">
-                中文
-              </Button>
-            </Link>
-          </div>
-          <Button onClick={() => scrollToSection('contact')} className="hidden md:inline-flex whitespace-nowrap">Contact Us</Button>
+          <Link to="/">
+            <Button variant="outline" size="sm" className="hidden md:inline-flex gap-2">
+              <Icon name="Globe" size={16} />
+              RU
+            </Button>
+          </Link>
+          <Button onClick={() => scrollToSection('contact')} className="hidden md:inline-flex whitespace-nowrap">联系我们</Button>
           
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -70,57 +64,45 @@ const Header = ({ scrollToSection }: HeaderProps) => {
             className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
             style={{ animationDelay: '50ms' }}
           >
-            About
+            关于我们
           </button>
           <button 
             onClick={() => handleMenuClick('services')} 
             className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
             style={{ animationDelay: '100ms' }}
           >
-            Services
+            服务项目
           </button>
           <button 
             onClick={() => handleMenuClick('gallery')} 
             className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
             style={{ animationDelay: '150ms' }}
           >
-            Equipment
+            设备展示
           </button>
           <button 
             onClick={() => handleMenuClick('contact')} 
             className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
             style={{ animationDelay: '200ms' }}
           >
-            Contact
+            联系我们
           </button>
-          <div className="flex gap-2 w-full">
-            <Link to="/" className="flex-1">
-              <Button 
-                variant="outline"
-                className="w-full animate-in slide-in-from-top-2 duration-300 gap-2"
-                style={{ animationDelay: '250ms' }}
-              >
-                <Icon name="Globe" size={16} />
-                Русский
-              </Button>
-            </Link>
-            <Link to="/zh" className="flex-1">
-              <Button 
-                variant="outline"
-                className="w-full animate-in slide-in-from-top-2 duration-300 gap-2"
-                style={{ animationDelay: '275ms' }}
-              >
-                <Icon name="Globe" size={16} />
-                中文
-              </Button>
-            </Link>
-          </div>
+          <Link to="/" className="w-full">
+            <Button 
+              variant="outline"
+              className="w-full animate-in slide-in-from-top-2 duration-300 gap-2"
+              style={{ animationDelay: '250ms' }}
+            >
+              <Icon name="Globe" size={16} />
+              Русский
+            </Button>
+          </Link>
           <Button 
             onClick={() => handleMenuClick('contact')} 
             className="w-full animate-in slide-in-from-top-2 duration-300"
             style={{ animationDelay: '300ms' }}
           >
-            Contact Us
+            联系我们
           </Button>
         </nav>
       </div>
