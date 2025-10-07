@@ -43,46 +43,33 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     message = form_data.get('message', '')
     file_name = form_data.get('fileName', '')
     
-    print(f"Received form data: name={name}, phone={phone}, message={message}")
-    
     results = {'database': False, 'telegram': False, 'email': False, 'errors': []}
     
     db_url = os.environ.get('DATABASE_URL')
-    print(f"DATABASE_URL exists: {bool(db_url)}")
     
     if db_url:
         try:
-            print("Connecting to database...")
             conn = psycopg2.connect(db_url)
+            conn.autocommit = True
             cur = conn.cursor()
             
             ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '')
             user_agent = event.get('headers', {}).get('user-agent', '')
             
-            print(f"Executing INSERT query...")
-            
-            def escape_sql(val):
+            def esc(val):
                 if not val:
-                    return "NULL"
-                return "'" + val.replace("'", "''") + "'"
+                    return 'NULL'
+                escaped = str(val).replace("'", "''").replace('\\', '\\\\')
+                return f"'{escaped}'"
             
-            message_val = escape_sql(message)
-            file_name_val = escape_sql(file_name)
-            ip_val = escape_sql(ip_address)
-            ua_val = escape_sql(user_agent)
-            name_val = escape_sql(name)
-            phone_val = escape_sql(phone)
-            
-            query = f"INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES ({name_val}, {phone_val}, {message_val}, {file_name_val}, {ip_val}, {ua_val})"
+            query = f"""INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) 
+                       VALUES ({esc(name)}, {esc(phone)}, {esc(message)}, {esc(file_name)}, {esc(ip_address)}, {esc(user_agent)})"""
             
             cur.execute(query)
-            conn.commit()
-            print("Database insert successful!")
             cur.close()
             conn.close()
             results['database'] = True
         except Exception as e:
-            print(f"Database error: {str(e)}")
             results['errors'].append(f'Database: {str(e)}')
     
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
@@ -147,17 +134,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         except Exception as e:
             results['errors'].append(f'Email: {str(e)}')
     
-    success = results['telegram'] or results['email']
-    
-    message = 'Заявка отправлена'
+    message_text = 'Заявка принята. Скоро свяжемся!'
     if results['telegram'] and results['email']:
-        message = 'Заявка отправлена в Telegram и на Email'
+        message_text = 'Заявка отправлена в Telegram и на Email'
     elif results['telegram']:
-        message = 'Заявка отправлена в Telegram'
+        message_text = 'Заявка отправлена в Telegram'
     elif results['email']:
-        message = 'Заявка отправлена на Email'
-    else:
-        message = 'Заявка принята. Скоро свяжемся!'
+        message_text = 'Заявка отправлена на Email'
     
     return {
         'statusCode': 200,
@@ -167,7 +150,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         },
         'body': json.dumps({
             'success': True,
-            'message': message,
+            'message': message_text,
             'results': results
         }),
         'isBase64Encoded': False
