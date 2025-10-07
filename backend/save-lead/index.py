@@ -1,5 +1,6 @@
 import json
 import os
+import socket
 from typing import Dict, Any
 from datetime import datetime
 
@@ -47,33 +48,32 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     db_url = os.environ.get('DATABASE_URL')
     
     if db_url:
-        import psycopg2
         try:
-            print(f'Connecting to DB...')
+            import psycopg2
+            from psycopg2 import sql
+            
             conn = psycopg2.connect(db_url)
+            conn.set_session(autocommit=True)
             cur = conn.cursor()
             
             ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '') or ''
             user_agent = event.get('headers', {}).get('user-agent', '') or ''
             
-            name_clean = name.replace("'", "''")
-            phone_clean = phone.replace("'", "''")
-            message_clean = message.replace("'", "''") if message else ''
-            file_clean = file_name.replace("'", "''") if file_name else ''
-            ip_clean = ip_address.replace("'", "''")
-            ua_clean = user_agent.replace("'", "''")
+            cur.execute(
+                sql.SQL("INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES ({}, {}, {}, {}, {}, {})").format(
+                    sql.Literal(name),
+                    sql.Literal(phone),
+                    sql.Literal(message or ''),
+                    sql.Literal(file_name or ''),
+                    sql.Literal(ip_address),
+                    sql.Literal(user_agent)
+                )
+            )
             
-            query = f"""INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES ('{name_clean}', '{phone_clean}', '{message_clean}', '{file_clean}', '{ip_clean}', '{ua_clean}')"""
-            
-            print(f'Executing query: {query[:100]}...')
-            cur.execute(query)
-            conn.commit()
-            print('DB commit successful!')
             cur.close()
             conn.close()
             results['database'] = True
         except Exception as e:
-            print(f'DB Error: {str(e)}')
             results['errors'].append(f'DB: {str(e)}')
     
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
@@ -138,9 +138,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         except Exception as e:
             results['errors'].append(f'Email: {str(e)}')
     
-    msg = 'Заявка принята!'
+    msg_text = 'Заявка принята!'
     if results['database']:
-        msg = 'Заявка сохранена!'
+        msg_text = 'Заявка сохранена!'
     
     return {
         'statusCode': 200,
@@ -150,7 +150,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         },
         'body': json.dumps({
             'success': True,
-            'message': msg,
+            'message': msg_text,
             'results': results
         }),
         'isBase64Encoded': False
