@@ -2,7 +2,6 @@ import json
 import os
 from typing import Dict, Any
 from datetime import datetime
-import psycopg2
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
@@ -48,54 +47,56 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     db_url = os.environ.get('DATABASE_URL')
     
     if db_url:
+        import psycopg2
         try:
             conn = psycopg2.connect(db_url)
-            conn.autocommit = True
             cur = conn.cursor()
             
-            ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '')
-            user_agent = event.get('headers', {}).get('user-agent', '')
+            ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '') or ''
+            user_agent = event.get('headers', {}).get('user-agent', '') or ''
             
-            def esc(val):
-                if not val:
-                    return 'NULL'
-                escaped = str(val).replace("'", "''").replace('\\', '\\\\')
-                return f"'{escaped}'"
+            name_clean = name.replace("'", "''")
+            phone_clean = phone.replace("'", "''")
+            message_clean = message.replace("'", "''") if message else ''
+            file_clean = file_name.replace("'", "''") if file_name else ''
+            ip_clean = ip_address.replace("'", "''")
+            ua_clean = user_agent.replace("'", "''")
             
-            query = f"""INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) 
-                       VALUES ({esc(name)}, {esc(phone)}, {esc(message)}, {esc(file_name)}, {esc(ip_address)}, {esc(user_agent)})"""
+            query = f"""INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent, created_at) 
+                       VALUES ('{name_clean}', '{phone_clean}', '{message_clean}', '{file_clean}', '{ip_clean}', '{ua_clean}', NOW())"""
             
             cur.execute(query)
+            conn.commit()
             cur.close()
             conn.close()
             results['database'] = True
         except Exception as e:
-            results['errors'].append(f'Database: {str(e)}')
+            results['errors'].append(f'DB: {str(e)}')
     
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
     chat_id = os.environ.get('TELEGRAM_CHAT_ID')
     
     if bot_token and chat_id:
         try:
-            from urllib import request
+            import urllib.request
             
-            telegram_message = f'''🆕 Новая заявка с сайта!
+            telegram_message = f'''🆕 Новая заявка!
 
-👤 Имя: {name}
-📱 Телефон: {phone}
-💬 Сообщение: {message}
+👤 {name}
+📱 {phone}
+💬 {message or "—"}
 
-⏰ Время: {datetime.now().strftime('%d.%m.%Y %H:%M')}'''
+⏰ {datetime.now().strftime('%d.%m.%Y %H:%M')}'''
             
             telegram_url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
             payload = json.dumps({'chat_id': chat_id, 'text': telegram_message}).encode('utf-8')
             
-            req = request.Request(telegram_url, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
-            with request.urlopen(req, timeout=5) as response:
+            req = urllib.request.Request(telegram_url, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+            with urllib.request.urlopen(req, timeout=5) as response:
                 response.read()
             results['telegram'] = True
         except Exception as e:
-            results['errors'].append(f'Telegram: {str(e)}')
+            results['errors'].append(f'TG: {str(e)}')
     
     smtp_host = os.environ.get('SMTP_HOST')
     smtp_user = os.environ.get('SMTP_USER')
@@ -113,19 +114,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             msg = MIMEMultipart()
             msg['From'] = smtp_user
             msg['To'] = email_to
-            msg['Subject'] = f"Новая заявка с сайта от {name}"
+            msg['Subject'] = f"Заявка от {name}"
             
-            body = f'''Новая заявка с сайта TechGlobal!
+            body = f'''Заявка с сайта
 
 Имя: {name}
 Телефон: {phone}
-Сообщение: {message}
+Сообщение: {message or "—"}
 
-Дата и время: {datetime.now().strftime('%d.%m.%Y %H:%M')}'''
+{datetime.now().strftime('%d.%m.%Y %H:%M')}'''
             
             msg.attach(MIMEText(body, 'plain', 'utf-8'))
             
-            server = smtplib.SMTP(smtp_host, smtp_port, timeout=5)
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
             server.starttls()
             server.login(smtp_user, smtp_password)
             server.send_message(msg)
@@ -134,13 +135,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         except Exception as e:
             results['errors'].append(f'Email: {str(e)}')
     
-    message_text = 'Заявка принята. Скоро свяжемся!'
-    if results['telegram'] and results['email']:
-        message_text = 'Заявка отправлена в Telegram и на Email'
-    elif results['telegram']:
-        message_text = 'Заявка отправлена в Telegram'
-    elif results['email']:
-        message_text = 'Заявка отправлена на Email'
+    msg = 'Заявка принята!'
+    if results['database']:
+        msg = 'Заявка сохранена!'
     
     return {
         'statusCode': 200,
@@ -150,7 +147,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         },
         'body': json.dumps({
             'success': True,
-            'message': message_text,
+            'message': msg,
             'results': results
         }),
         'isBase64Encoded': False

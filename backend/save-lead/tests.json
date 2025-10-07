@@ -3,11 +3,10 @@
     {
       "name": "Сохранение заявки",
       "method": "POST",
-      "path": "/",
       "body": {
-        "name": "Иван Иванов",
-        "phone": "+7 (900) 123-45-67",
-        "message": "Интересует поставка техники"
+        "name": "Тест Тестов",
+        "phone": "+79001234567",
+        "message": "Тестовая заявка"
       },
       "expectedStatus": 200,
       "expectedBody": {
@@ -18,7 +17,6 @@
     {
       "name": "OPTIONS запрос для CORS",
       "method": "OPTIONS",
-      "path": "/",
       "expectedStatus": 200
     }
   ]
