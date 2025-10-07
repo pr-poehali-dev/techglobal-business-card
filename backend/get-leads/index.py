@@ -50,38 +50,43 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'isBase64Encoded': False
         }
 
-    parsed = urlparse(database_url)
-    db_host = parsed.hostname
-    db_port = parsed.port or 5432
-    db_name = parsed.path.lstrip('/')
-    db_user = parsed.username
-    db_password = parsed.password
-
-    leads = [
-        {
-            'id': 1,
-            'name': 'Иван Петров',
-            'phone': '+7 (900) 123-45-67',
-            'message': 'Интересует поставка погрузчиков',
-            'file_name': '',
-            'created_at': '2024-10-06T10:30:00'
-        },
-        {
-            'id': 2,
-            'name': 'Мария Сидорова',
-            'phone': '+7 (905) 987-65-43',
-            'message': 'Нужна консультация по экскаваторам',
-            'file_name': '',
-            'created_at': '2024-10-06T14:15:00'
+    try:
+        import psycopg2
+        from psycopg2.extras import RealDictCursor
+        
+        conn = psycopg2.connect(database_url)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        
+        cur.execute("""
+            SELECT id, name, phone, message, file_name, 
+                   created_at::text as created_at
+            FROM leads 
+            ORDER BY created_at DESC 
+            LIMIT 100
+        """)
+        
+        rows = cur.fetchall()
+        leads = [dict(row) for row in rows]
+        
+        cur.close()
+        conn.close()
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'leads': leads, 'total': len(leads)}),
+            'isBase64Encoded': False
         }
-    ]
-    
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({'leads': leads, 'total': len(leads)}),
-        'isBase64Encoded': False
-    }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'error': str(e), 'leads': [], 'total': 0}),
+            'isBase64Encoded': False
+        }
