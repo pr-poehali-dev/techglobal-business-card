@@ -1,10 +1,30 @@
 import { Card } from "@/components/ui/card";
+import { useState, useEffect, useRef } from "react";
 
-interface GallerySectionProps {
-  visibleCards: Set<number>;
-}
+const GallerySection = () => {
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-const GallerySection = ({ visibleCards }: GallerySectionProps) => {
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute('data-index') || '0');
+            setVisibleCards(prev => new Set(prev).add(index));
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const cards = document.querySelectorAll('[data-animate]');
+    cards.forEach(card => observerRef.current?.observe(card));
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, []);
   const galleryItems = [
     {
       index: 0,
