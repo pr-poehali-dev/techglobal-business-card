@@ -60,10 +60,22 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             user_agent = event.get('headers', {}).get('user-agent', '')
             
             print(f"Executing INSERT query...")
-            cur.execute(
-                "INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (%s, %s, %s, %s, %s, %s)",
-                (name, phone, message or None, file_name or None, ip_address, user_agent)
-            )
+            
+            def escape_sql(val):
+                if not val:
+                    return "NULL"
+                return "'" + val.replace("'", "''") + "'"
+            
+            message_val = escape_sql(message)
+            file_name_val = escape_sql(file_name)
+            ip_val = escape_sql(ip_address)
+            ua_val = escape_sql(user_agent)
+            name_val = escape_sql(name)
+            phone_val = escape_sql(phone)
+            
+            query = f"INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES ({name_val}, {phone_val}, {message_val}, {file_name_val}, {ip_val}, {ua_val})"
+            
+            cur.execute(query)
             conn.commit()
             print("Database insert successful!")
             cur.close()
