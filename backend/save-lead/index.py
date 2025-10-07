@@ -63,8 +63,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             ip_clean = ip_address.replace("'", "''")
             ua_clean = user_agent.replace("'", "''")
             
-            query = f"""INSERT INTO t_p90963059_techglobal_business_.leads (name, phone, message, file_name, ip_address, user_agent) 
-                       VALUES ('{name_clean}', '{phone_clean}', '{message_clean}', '{file_clean}', '{ip_clean}', '{ua_clean}')"""
+            query = f"""INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES ('{name_clean}', '{phone_clean}', '{message_clean}', '{file_clean}', '{ip_clean}', '{ua_clean}')"""
             
             print(f'Executing query: {query[:100]}...')
             cur.execute(query)
