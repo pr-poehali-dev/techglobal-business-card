@@ -46,26 +46,21 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     db_url = os.environ.get('DATABASE_URL')
     
     if db_url:
-        import pg8000.native
+        import psycopg2
         try:
-            from urllib.parse import urlparse
-            parsed = urlparse(db_url)
-            
-            conn = pg8000.native.Connection(
-                user=parsed.username,
-                password=parsed.password,
-                host=parsed.hostname,
-                port=parsed.port or 5432,
-                database=parsed.path[1:]
-            )
+            conn = psycopg2.connect(db_url)
+            cur = conn.cursor()
             
             ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '') or ''
             user_agent = event.get('headers', {}).get('user-agent', '') or ''
             
             print(f"Attempting DB insert: {name}, {phone}")
-            conn.run("INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (:name, :phone, :msg, :file, :ip, :ua)",
-                    name=name, phone=phone, msg=message or '', file=file_name or '', ip=ip_address, ua=user_agent)
-            
+            cur.execute(
+                "INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (%s, %s, %s, %s, %s, %s)",
+                (name, phone, message or '', file_name or '', ip_address, user_agent)
+            )
+            conn.commit()
+            cur.close()
             conn.close()
             results['database'] = True
             print("DB insert successful!")
