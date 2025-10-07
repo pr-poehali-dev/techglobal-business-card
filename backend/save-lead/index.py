@@ -62,12 +62,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '') or ''
             user_agent = event.get('headers', {}).get('user-agent', '') or ''
             
+            print(f"Attempting DB insert: {name}, {phone}")
             conn.run("INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (:name, :phone, :msg, :file, :ip, :ua)",
                     name=name, phone=phone, msg=message or '', file=file_name or '', ip=ip_address, ua=user_agent)
             
             conn.close()
             results['database'] = True
+            print("DB insert successful!")
         except Exception as e:
+            print(f"DB ERROR: {str(e)}")
             results['errors'].append(str(e))
     
     return {
