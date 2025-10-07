@@ -43,26 +43,34 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     message = form_data.get('message', '')
     file_name = form_data.get('fileName', '')
     
+    print(f"Received form data: name={name}, phone={phone}, message={message}")
+    
     results = {'database': False, 'telegram': False, 'email': False, 'errors': []}
     
     db_url = os.environ.get('DATABASE_URL')
+    print(f"DATABASE_URL exists: {bool(db_url)}")
+    
     if db_url:
         try:
+            print("Connecting to database...")
             conn = psycopg2.connect(db_url)
             cur = conn.cursor()
             
             ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '')
             user_agent = event.get('headers', {}).get('user-agent', '')
             
+            print(f"Executing INSERT query...")
             cur.execute(
                 "INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (%s, %s, %s, %s, %s, %s)",
                 (name, phone, message or None, file_name or None, ip_address, user_agent)
             )
             conn.commit()
+            print("Database insert successful!")
             cur.close()
             conn.close()
             results['database'] = True
         except Exception as e:
+            print(f"Database error: {str(e)}")
             results['errors'].append(f'Database: {str(e)}')
     
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
