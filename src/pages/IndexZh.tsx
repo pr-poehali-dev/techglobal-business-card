@@ -44,25 +44,26 @@ const IndexZh = () => {
         fileName = selectedFile.name;
       }
 
-      const response = await fetch('https://functions.yandexcloud.net/d4elvdqi6bn9qlvkv0mc', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          company: formData.company,
-          message: formData.message,
-          file: fileBase64 || undefined,
-          fileName: fileName || undefined,
+      const requestBody = {
+        ...formData,
+        file: fileBase64,
+        fileName: fileName
+      };
+
+      const [saveResponse, emailResponse] = await Promise.all([
+        fetch('https://functions.poehali.dev/a1f9e107-650b-48e2-b7c0-88cf2e63eed4', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
         }),
-      });
+        fetch('https://functions.poehali.dev/8c7c76e3-ebf6-4218-b8b2-4d00a0f3ccfc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        })
+      ]);
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (saveResponse.ok || emailResponse.ok) {
         setSubmitStatus('success');
         setFormData({ name: '', email: '', phone: '', company: '', message: '' });
         setSelectedFile(null);

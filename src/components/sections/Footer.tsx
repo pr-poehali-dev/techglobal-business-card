@@ -10,7 +10,15 @@ const Footer = () => {
               className="h-8 brightness-0 invert"
             />
           </div>
-          <p className="text-sm text-white/80">© 2025 ТехГлобал. Все права защищены.</p>
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-white/80">© 2025 ТехГлобал. Все права защищены.</p>
+            <a 
+              href="/admin" 
+              className="text-xs text-white/50 hover:text-white/80 transition-colors"
+            >
+              Админ
+            </a>
+          </div>
         </div>
       </div>
     </footer>
