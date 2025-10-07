@@ -56,7 +56,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             print(f"Attempting DB insert: {name}, {phone}")
             cur.execute(
-                "INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (%s, %s, %s, %s, %s, %s)",
+                'INSERT INTO "t_p90963059_techglobal_business_"."leads" (name, phone, message, file_name, ip_address, user_agent) VALUES (%s, %s, %s, %s, %s, %s)',
                 (name, phone, message or '', file_name or '', ip_address, user_agent)
             )
             conn.commit()
