@@ -49,6 +49,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     if db_url:
         import psycopg2
         try:
+            print(f'Connecting to DB...')
             conn = psycopg2.connect(db_url)
             cur = conn.cursor()
             
@@ -62,15 +63,18 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             ip_clean = ip_address.replace("'", "''")
             ua_clean = user_agent.replace("'", "''")
             
-            query = f"""INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent, created_at) 
-                       VALUES ('{name_clean}', '{phone_clean}', '{message_clean}', '{file_clean}', '{ip_clean}', '{ua_clean}', NOW())"""
+            query = f"""INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) 
+                       VALUES ('{name_clean}', '{phone_clean}', '{message_clean}', '{file_clean}', '{ip_clean}', '{ua_clean}')"""
             
+            print(f'Executing query: {query[:100]}...')
             cur.execute(query)
             conn.commit()
+            print('DB commit successful!')
             cur.close()
             conn.close()
             results['database'] = True
         except Exception as e:
+            print(f'DB Error: {str(e)}')
             results['errors'].append(f'DB: {str(e)}')
     
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
