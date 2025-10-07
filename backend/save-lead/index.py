@@ -46,24 +46,25 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     db_url = os.environ.get('DATABASE_URL')
     
     if db_url:
-        import psycopg2
+        import pg8000.native
         try:
-            conn = psycopg2.connect(db_url)
-            cur = conn.cursor()
+            from urllib.parse import urlparse
+            parsed = urlparse(db_url)
+            
+            conn = pg8000.native.Connection(
+                user=parsed.username,
+                password=parsed.password,
+                host=parsed.hostname,
+                port=parsed.port or 5432,
+                database=parsed.path[1:]
+            )
             
             ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '') or ''
             user_agent = event.get('headers', {}).get('user-agent', '') or ''
             
-            def esc(s):
-                if not s:
-                    return "''"
-                return "'" + str(s).replace('\\', '\\\\').replace("'", "''") + "'"
+            conn.run("INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES (:name, :phone, :msg, :file, :ip, :ua)",
+                    name=name, phone=phone, msg=message or '', file=file_name or '', ip=ip_address, ua=user_agent)
             
-            query = f"INSERT INTO leads (name, phone, message, file_name, ip_address, user_agent) VALUES ({esc(name)}, {esc(phone)}, {esc(message)}, {esc(file_name)}, {esc(ip_address)}, {esc(user_agent)})"
-            
-            cur.execute(query)
-            conn.commit()
-            cur.close()
             conn.close()
             results['database'] = True
         except Exception as e:
