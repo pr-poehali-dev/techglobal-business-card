@@ -43,7 +43,7 @@ const ContactSection = ({
                   </div>
                   <div>
                     <p className="font-medium mb-1">地址</p>
-                    <p className="text-sm text-muted-foreground">香港铜锣湾轩尼诗道505号<br />电讯广播大厦15楼</p>
+                    <p className="text-sm text-muted-foreground">15/F Radio City 505 Hennesy Road<br />Causeway Bay, Hong Kong</p>
                   </div>
                 </div>
                 
