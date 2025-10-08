@@ -20,6 +20,8 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [clearAllPassword, setClearAllPassword] = useState("");
+  const [showClearAll, setShowClearAll] = useState(false);
 
   const ADMIN_PASSWORD = "Ktcybr21!";
 
@@ -80,6 +82,38 @@ const Admin = () => {
     }
   };
 
+  const handleClearAll = async () => {
+    if (!clearAllPassword) {
+      alert('Введите пароль для очистки');
+      return;
+    }
+
+    if (!confirm(`Вы уверены? Это удалит все ${leads.length} заявок!`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch('https://functions.poehali.dev/a11975fe-9361-4ac1-b328-9f59532b9dc4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clear_all: true, password: clearAllPassword })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message || 'Все заявки удалены!');
+        setClearAllPassword('');
+        setShowClearAll(false);
+        fetchLeads();
+      } else {
+        alert(data.error || 'Ошибка очистки');
+      }
+    } catch (error) {
+      alert('Ошибка очистки заявок');
+    }
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
     fetchLeads();
@@ -116,6 +150,15 @@ const Admin = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Заявки с сайта</h1>
           <div className="flex gap-4">
+            {leads.length > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => setShowClearAll(!showClearAll)}
+              >
+                <Icon name="Trash2" size={20} className="mr-2" />
+                Очистить всё
+              </Button>
+            )}
             <Button
               variant="outline"
               onClick={() => window.location.href = '/'}
@@ -135,6 +178,38 @@ const Admin = () => {
             </Button>
           </div>
         </div>
+
+        {showClearAll && (
+          <Card className="p-6 mb-6 border-destructive bg-destructive/5">
+            <h3 className="text-lg font-semibold mb-4 text-destructive">⚠️ Очистка всех заявок</h3>
+            <p className="text-sm mb-4">Введите пароль администратора для удаления всех {leads.length} заявок:</p>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                value={clearAllPassword}
+                onChange={(e) => setClearAllPassword(e.target.value)}
+                placeholder="Пароль администратора"
+                className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-destructive"
+                onKeyDown={(e) => e.key === 'Enter' && handleClearAll()}
+              />
+              <Button
+                variant="destructive"
+                onClick={handleClearAll}
+              >
+                Удалить все
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowClearAll(false);
+                  setClearAllPassword('');
+                }}
+              >
+                Отмена
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {loading ? (
           <div className="text-center py-12">

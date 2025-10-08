@@ -4,8 +4,8 @@ from typing import Dict, Any
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: Удаление заявки из базы данных
-    Args: event - dict с httpMethod, body (id, password)
+    Business: Удаление заявки или всех заявок из базы данных
+    Args: event - dict с httpMethod, body (id, password, clear_all)
           context - объект с атрибутами request_id, function_name
     Returns: HTTP response dict с результатом удаления
     '''
@@ -38,6 +38,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     form_data = json.loads(event.get('body', '{}'))
     lead_id = form_data.get('id', 0)
     password = form_data.get('password', '')
+    clear_all = form_data.get('clear_all', False)
     
     ADMIN_PASSWORD = 'Ktcybr21!'
     
@@ -73,21 +74,40 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
         
-        sql = f"DELETE FROM t_p90963059_techglobal_business_.leads WHERE id = {int(lead_id)}"
-        cur.execute(sql)
-        
-        cur.close()
-        conn.close()
-        
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            'body': json.dumps({'success': True, 'message': 'Заявка удалена'}),
-            'isBase64Encoded': False
-        }
+        if clear_all:
+            cur.execute("SELECT COUNT(*) FROM t_p90963059_techglobal_business_.leads")
+            count = cur.fetchone()[0]
+            
+            cur.execute("DELETE FROM t_p90963059_techglobal_business_.leads")
+            
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'success': True, 'message': f'Удалено заявок: {count}', 'deleted': count}),
+                'isBase64Encoded': False
+            }
+        else:
+            sql = f"DELETE FROM t_p90963059_techglobal_business_.leads WHERE id = {int(lead_id)}"
+            cur.execute(sql)
+            
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'success': True, 'message': 'Заявка удалена'}),
+                'isBase64Encoded': False
+            }
     except Exception as e:
         return {
             'statusCode': 500,
