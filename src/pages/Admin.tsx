@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import * as XLSX from 'xlsx';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface Lead {
   id: number;
@@ -26,6 +27,7 @@ const Admin = () => {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showStats, setShowStats] = useState(false);
 
   const ADMIN_PASSWORD = "Ktcybr21!";
 
@@ -141,6 +143,47 @@ const Admin = () => {
     fetchLeads();
   }, [isAuthenticated]);
 
+  const getStatistics = () => {
+    const byDate: Record<string, number> = {};
+    const byHour: Record<number, number> = {};
+    const withFiles = leads.filter(l => l.file_name).length;
+    const withoutFiles = leads.length - withFiles;
+
+    leads.forEach(lead => {
+      const date = new Date(lead.created_at);
+      const dateKey = date.toLocaleDateString('ru-RU');
+      const hour = date.getHours();
+      
+      byDate[dateKey] = (byDate[dateKey] || 0) + 1;
+      byHour[hour] = (byHour[hour] || 0) + 1;
+    });
+
+    const dateData = Object.entries(byDate)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => new Date(a.date.split('.').reverse().join('-')).getTime() - new Date(b.date.split('.').reverse().join('-')).getTime())
+      .slice(-14);
+
+    const hourData = Array.from({ length: 24 }, (_, i) => ({
+      hour: `${i}:00`,
+      count: byHour[i] || 0
+    }));
+
+    const topHours = Object.entries(byHour)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([hour, count]) => ({ hour: `${hour}:00`, count }));
+
+    const filesData = [
+      { name: 'С файлами', value: withFiles },
+      { name: 'Без файлов', value: withoutFiles }
+    ];
+
+    return { dateData, hourData, topHours, filesData };
+  };
+
+  const stats = getStatistics();
+  const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
+
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = searchTerm === "" || 
       lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -185,6 +228,13 @@ const Admin = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Заявки с сайта</h1>
           <div className="flex gap-4">
+            <Button
+              variant={showStats ? "default" : "outline"}
+              onClick={() => setShowStats(!showStats)}
+            >
+              <Icon name={showStats ? "List" : "BarChart3"} size={20} className="mr-2" />
+              {showStats ? 'Список заявок' : 'Статистика'}
+            </Button>
             {filteredLeads.length > 0 && (
               <Button
                 variant="default"
@@ -279,7 +329,128 @@ const Admin = () => {
           </Card>
         )}
 
-        {showClearAll && (
+        {showStats && (
+          <div className="space-y-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="p-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Icon name="Mail" size={20} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Всего заявок</p>
+                    <p className="text-2xl font-bold">{leads.length}</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Icon name="Paperclip" size={20} className="text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">С файлами</p>
+                    <p className="text-2xl font-bold">{stats.filesData[0].value}</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Icon name="Calendar" size={20} className="text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">За последние 7 дней</p>
+                    <p className="text-2xl font-bold">
+                      {leads.filter(l => {
+                        const diff = Date.now() - new Date(l.created_at).getTime();
+                        return diff < 7 * 24 * 60 * 60 * 1000;
+                      }).length}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Icon name="TrendingUp" size={20} />
+                  Заявки по дням (последние 14 дней)
+                </h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={stats.dateData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#3b82f6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Icon name="Clock" size={20} />
+                  Топ-5 часов по заявкам
+                </h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={stats.topHours} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="hour" type="category" />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#8b5cf6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Icon name="PieChart" size={20} />
+                  Заявки с файлами
+                </h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={stats.filesData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {stats.filesData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Card>
+
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Icon name="Activity" size={20} />
+                  Активность по часам (24ч)
+                </h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={stats.hourData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="hour" tick={{ fontSize: 10 }} interval={2} />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#10b981" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {showClearAll && !showStats && (
           <Card className="p-6 mb-6 border-destructive bg-destructive/5">
             <h3 className="text-lg font-semibold mb-4 text-destructive">⚠️ Очистка всех заявок</h3>
             <p className="text-sm mb-4">Введите пароль администратора для удаления всех {leads.length} заявок:</p>

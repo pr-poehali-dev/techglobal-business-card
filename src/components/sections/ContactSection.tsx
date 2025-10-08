@@ -132,31 +132,57 @@ const ContactSection = ({
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Прикрепить файл (не обязательно)</label>
+                  <label className="text-sm font-medium mb-2 block">Прикрепить файл (необязательно)</label>
                   <div className="relative">
                     <input 
                       type="file" 
                       id="file-upload"
                       className="hidden"
-                      onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                      accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setSelectedFile(file);
+                        }
+                      }}
+                      accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.zip,.rar"
                     />
                     <label 
                       htmlFor="file-upload"
-                      className="w-full px-4 py-3 border border-input rounded-lg flex items-center gap-3 cursor-pointer hover:bg-accent transition-colors bg-background"
+                      className="w-full px-4 py-3 border-2 border-dashed border-input rounded-lg flex items-center gap-3 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all bg-background"
                     >
-                      <Icon name="Paperclip" size={20} className="text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
-                        {selectedFile ? selectedFile.name : 'Выберите файл (PDF, DOC, JPG, PNG)'}
-                      </span>
+                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Icon name="Upload" size={20} className="text-primary" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        {selectedFile ? (
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{selectedFile.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {(selectedFile.size / 1024).toFixed(1)} KB
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="text-sm font-medium text-foreground">Нажмите для выбора файла</p>
+                            <p className="text-xs text-muted-foreground">
+                              PDF, DOC, JPG, PNG (макс. 10 МБ)
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </label>
                     {selectedFile && (
                       <button
                         type="button"
-                        onClick={() => setSelectedFile(null)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedFile(null);
+                          const input = document.getElementById('file-upload') as HTMLInputElement;
+                          if (input) input.value = '';
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-full flex items-center justify-center transition-colors"
                       >
-                        <Icon name="X" size={18} />
+                        <Icon name="X" size={16} />
                       </button>
                     )}
                   </div>
