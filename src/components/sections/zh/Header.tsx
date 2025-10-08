@@ -18,14 +18,18 @@ const Header = ({ scrollToSection }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-border">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <button 
+          onClick={() => scrollToSection('hero')}
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          aria-label="首页"
+        >
           <img 
             src="https://cdn.poehali.dev/files/f0e9eaf0-f813-41a1-bd09-80829adf3b3e.png" 
             alt="TechGlobal" 
             className="h-14 md:h-16 object-contain"
             style={{ imageRendering: 'crisp-edges' }}
           />
-        </div>
+        </button>
         
         <nav className="hidden md:flex items-center gap-4 lg:gap-6">
           <button onClick={() => scrollToSection('about')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">关于我们</button>
