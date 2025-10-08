@@ -16,7 +16,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
           context - объект с атрибутами request_id, function_name
     Returns: HTTP response dict с результатом отправки
     '''
+    print(f"=== EMAIL FUNCTION CALLED ===")
     print(f"Request received: {event.get('httpMethod')}")
+    print(f"Body: {event.get('body', 'NO BODY')}")
     method: str = event.get('httpMethod', 'GET')
     
     if method == 'OPTIONS':
