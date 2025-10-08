@@ -60,7 +60,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             safe_file = (file_name or '').replace("'", "''")
             safe_file_data = (file_data or '').replace("'", "''")
             
-            print(f"Attempting DB insert: {name}, {phone}")
+            print(f"Attempting DB insert: {name}, {phone}, file_name: {file_name}, file_data_length: {len(safe_file_data)}")
             sql = f"INSERT INTO t_p90963059_techglobal_business_.leads (name, phone, message, file_name, file_data) VALUES ('{safe_name}', '{safe_phone}', '{safe_message}', '{safe_file}', '{safe_file_data}')"
             cur.execute(sql)
             

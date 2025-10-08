@@ -59,10 +59,18 @@ const Index = () => {
         })
       ]);
 
+      console.log('Save response:', saveResponse.ok);
+      console.log('Email response:', emailResponse.ok);
+
       if (saveResponse.ok) {
         setSubmitStatus('success');
         setFormData({ name: '', phone: '', message: '' });
         setSelectedFile(null);
+        
+        if (!emailResponse.ok) {
+          const emailError = await emailResponse.json();
+          console.error('Email error:', emailError);
+        }
         
         setTimeout(() => {
           setSubmitStatus('idle');
