@@ -79,11 +79,11 @@ export const updateMetaTags = (lang: 'ru' | 'en' | 'zh') => {
       twitterDescription.setAttribute('content', '中国特种设备和工业机械直接供应。运营超过10年。');
     }
   } else {
-    document.title = 'ТехГлобал — Поставка спецтехники из Китая | Прямые поставки от производителей';
+    document.title = 'ТехГлобал — Поставки и продажа спецтехники и промышленного оборудования';
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'ТехГлобал — прямые поставки спецтехники и промышленного оборудования из КНР. Строительная техника, генераторы, грузовые автомобили. 10 лет на рынке. Гибкие условия.');
+      metaDescription.setAttribute('content', 'ТехГлобал — поставки и продажа спецтехники и промышленного оборудования из КНР. Строительная техника, генераторы, грузовые автомобили. 10 лет на рынке. Гибкие условия.');
     }
 
     const metaKeywords = document.querySelector('meta[name="keywords"]');
