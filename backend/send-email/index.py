@@ -94,11 +94,17 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         msg.attach(part)
     
     try:
-        server = smtplib.SMTP(smtp_host, smtp_port)
-        server.starttls()
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(smtp_host, smtp_port)
+        else:
+            server = smtplib.SMTP(smtp_host, smtp_port)
+            server.starttls()
+        
         server.login(smtp_user, smtp_password)
         server.send_message(msg)
         server.quit()
+        
+        print("Email sent successfully!")
         
         return {
             'statusCode': 200,
