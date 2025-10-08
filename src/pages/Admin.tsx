@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
+import * as XLSX from 'xlsx';
 
 interface Lead {
   id: number;
@@ -22,6 +23,9 @@ const Admin = () => {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [clearAllPassword, setClearAllPassword] = useState("");
   const [showClearAll, setShowClearAll] = useState(false);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const ADMIN_PASSWORD = "Ktcybr21!";
 
@@ -82,6 +86,24 @@ const Admin = () => {
     }
   };
 
+  const exportToExcel = () => {
+    const exportData = filteredLeads.map(lead => ({
+      'ID': lead.id,
+      'Имя': lead.name,
+      'Телефон': lead.phone,
+      'Сообщение': lead.message,
+      'Файл': lead.file_name || 'Нет',
+      'Дата создания': new Date(lead.created_at).toLocaleString('ru-RU')
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Заявки');
+    
+    const fileName = `Заявки_${new Date().toLocaleDateString('ru-RU').replace(/\./g, '-')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   const handleClearAll = async () => {
     if (!clearAllPassword) {
       alert('Введите пароль для очистки');
@@ -119,6 +141,19 @@ const Admin = () => {
     fetchLeads();
   }, [isAuthenticated]);
 
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch = searchTerm === "" || 
+      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.phone.includes(searchTerm) ||
+      lead.message.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const leadDate = new Date(lead.created_at);
+    const matchesDateFrom = !dateFrom || leadDate >= new Date(dateFrom);
+    const matchesDateTo = !dateTo || leadDate <= new Date(dateTo + 'T23:59:59');
+    
+    return matchesSearch && matchesDateFrom && matchesDateTo;
+  });
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
@@ -150,6 +185,15 @@ const Admin = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Заявки с сайта</h1>
           <div className="flex gap-4">
+            {filteredLeads.length > 0 && (
+              <Button
+                variant="default"
+                onClick={exportToExcel}
+              >
+                <Icon name="Download" size={20} className="mr-2" />
+                Экспорт в Excel
+              </Button>
+            )}
             {leads.length > 0 && (
               <Button
                 variant="destructive"
@@ -178,6 +222,62 @@ const Admin = () => {
             </Button>
           </div>
         </div>
+
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Поиск</label>
+            <div className="relative">
+              <Icon name="Search" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Имя, телефон, сообщение..."
+                className="w-full pl-10 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">С даты</label>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">По дату</label>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+        </div>
+
+        {filteredLeads.length !== leads.length && (
+          <Card className="p-4 mb-6 bg-primary/5">
+            <p className="text-sm">
+              Показано заявок: <strong>{filteredLeads.length}</strong> из <strong>{leads.length}</strong>
+              {(searchTerm || dateFrom || dateTo) && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setDateFrom('');
+                    setDateTo('');
+                  }}
+                  className="ml-2"
+                >
+                  Сбросить фильтры
+                </Button>
+              )}
+            </p>
+          </Card>
+        )}
 
         {showClearAll && (
           <Card className="p-6 mb-6 border-destructive bg-destructive/5">
@@ -218,13 +318,28 @@ const Admin = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {leads.length === 0 ? (
+            {filteredLeads.length === 0 && leads.length > 0 ? (
+              <Card className="p-8 text-center">
+                <Icon name="Filter" size={48} className="mx-auto mb-4 text-muted-foreground" />
+                <p className="text-lg text-muted-foreground mb-2">По вашим фильтрам ничего не найдено</p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setDateFrom('');
+                    setDateTo('');
+                  }}
+                >
+                  Сбросить фильтры
+                </Button>
+              </Card>
+            ) : filteredLeads.length === 0 ? (
               <Card className="p-8 text-center">
                 <Icon name="Inbox" size={48} className="mx-auto mb-4 text-muted-foreground" />
                 <p className="text-lg text-muted-foreground">Заявок пока нет</p>
               </Card>
             ) : (
-              leads.map((lead) => (
+              filteredLeads.map((lead) => (
                 <Card key={lead.id} className="p-6 hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div>
