@@ -40,6 +40,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     phone = form_data.get('phone', '')
     message = form_data.get('message', '')
     file_name = form_data.get('fileName', '')
+    file_data = form_data.get('file', '')
     
     results = {'database': False, 'errors': []}
     
@@ -57,9 +58,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             safe_phone = phone.replace("'", "''")
             safe_message = (message or '').replace("'", "''")
             safe_file = (file_name or '').replace("'", "''")
+            safe_file_data = (file_data or '').replace("'", "''")
             
             print(f"Attempting DB insert: {name}, {phone}")
-            sql = f"INSERT INTO t_p90963059_techglobal_business_.leads (name, phone, message, file_name) VALUES ('{safe_name}', '{safe_phone}', '{safe_message}', '{safe_file}')"
+            sql = f"INSERT INTO t_p90963059_techglobal_business_.leads (name, phone, message, file_name, file_data) VALUES ('{safe_name}', '{safe_phone}', '{safe_message}', '{safe_file}', '{safe_file_data}')"
             cur.execute(sql)
             
             cur.close()

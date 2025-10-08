@@ -1,4 +1,5 @@
 {
+  "delete-lead": "https://functions.poehali.dev/a11975fe-9361-4ac1-b328-9f59532b9dc4",
   "get-leads": "https://functions.poehali.dev/1fc2cbd9-568a-4928-ae37-0cee42d9dcc3",
   "save-lead": "https://functions.poehali.dev/a1f9e107-650b-48e2-b7c0-88cf2e63eed4",
   "send-email": "https://functions.poehali.dev/8c7c76e3-ebf6-4218-b8b2-4d00a0f3ccfc",

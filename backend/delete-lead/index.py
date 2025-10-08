@@ -1,24 +1,22 @@
 import json
 import os
 from typing import Dict, Any
-from urllib import request as urllib_request
-from urllib.parse import urlparse, parse_qs
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: Получение списка заявок из базы данных
-    Args: event - dict с httpMethod, queryStringParameters
+    Business: Удаление заявки из базы данных
+    Args: event - dict с httpMethod, body (id, password)
           context - объект с атрибутами request_id, function_name
-    Returns: HTTP response dict со списком заявок
+    Returns: HTTP response dict с результатом удаления
     '''
-    method: str = event.get('httpMethod', 'GET')
+    method: str = event.get('httpMethod', 'POST')
     
     if method == 'OPTIONS':
         return {
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, OPTIONS',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type',
                 'Access-Control-Max-Age': '86400'
             },
@@ -26,7 +24,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'isBase64Encoded': False
         }
     
-    if method != 'GET':
+    if method != 'POST':
         return {
             'statusCode': 405,
             'headers': {
@@ -37,6 +35,23 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'isBase64Encoded': False
         }
 
+    form_data = json.loads(event.get('body', '{}'))
+    lead_id = form_data.get('id', 0)
+    password = form_data.get('password', '')
+    
+    ADMIN_PASSWORD = 'Ktcybr21!'
+    
+    if password != ADMIN_PASSWORD:
+        return {
+            'statusCode': 403,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'error': 'Неверный пароль'}),
+            'isBase64Encoded': False
+        }
+    
     database_url = os.environ.get('DATABASE_URL')
     
     if not database_url:
@@ -52,21 +67,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
     try:
         import psycopg2
-        from psycopg2.extras import RealDictCursor
+        import psycopg2.extensions
         
         conn = psycopg2.connect(database_url)
-        cur = conn.cursor(cursor_factory=RealDictCursor)
+        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = conn.cursor()
         
-        cur.execute("""
-            SELECT id, name, phone, message, file_name, file_data,
-                   created_at::text as created_at
-            FROM t_p90963059_techglobal_business_.leads 
-            ORDER BY created_at DESC 
-            LIMIT 100
-        """)
-        
-        rows = cur.fetchall()
-        leads = [dict(row) for row in rows]
+        sql = f"DELETE FROM t_p90963059_techglobal_business_.leads WHERE id = {int(lead_id)}"
+        cur.execute(sql)
         
         cur.close()
         conn.close()
@@ -77,7 +85,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            'body': json.dumps({'leads': leads, 'total': len(leads)}),
+            'body': json.dumps({'success': True, 'message': 'Заявка удалена'}),
             'isBase64Encoded': False
         }
     except Exception as e:
@@ -87,6 +95,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            'body': json.dumps({'error': str(e), 'leads': [], 'total': 0}),
+            'body': json.dumps({'error': str(e)}),
             'isBase64Encoded': False
         }

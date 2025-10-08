@@ -9,6 +9,7 @@ interface Lead {
   phone: string;
   message: string;
   file_name: string;
+  file_data: string | null;
   created_at: string;
 }
 
@@ -17,8 +18,10 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const ADMIN_PASSWORD = "techglobal2024";
+  const ADMIN_PASSWORD = "Ktcybr21!";
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,21 +40,48 @@ const Admin = () => {
     }
   }, []);
 
+  const fetchLeads = async () => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/1fc2cbd9-568a-4928-ae37-0cee42d9dcc3');
+      const data = await response.json();
+      setLeads(data.leads || []);
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (leadId: number) => {
+    if (!deletePassword) {
+      alert('Введите пароль для удаления');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://functions.poehali.dev/a11975fe-9361-4ac1-b328-9f59532b9dc4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: leadId, password: deletePassword })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Заявка удалена!');
+        setDeletePassword('');
+        setDeletingId(null);
+        fetchLeads();
+      } else {
+        alert(data.error || 'Ошибка удаления');
+      }
+    } catch (error) {
+      alert('Ошибка удаления заявки');
+    }
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
-
-    const fetchLeads = async () => {
-      try {
-        const response = await fetch('https://functions.poehali.dev/1fc2cbd9-568a-4928-ae37-0cee42d9dcc3');
-        const data = await response.json();
-        setLeads(data.leads || []);
-      } catch (error) {
-        console.error('Error fetching leads:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchLeads();
   }, [isAuthenticated]);
 
@@ -128,7 +158,7 @@ const Admin = () => {
                         {new Date(lead.created_at).toLocaleString('ru-RU')}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex items-center gap-3">
                       <a 
                         href={`tel:${lead.phone}`}
                         className="text-primary font-medium hover:underline flex items-center gap-2"
@@ -136,6 +166,13 @@ const Admin = () => {
                         <Icon name="Phone" size={16} />
                         {lead.phone}
                       </a>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => setDeletingId(lead.id)}
+                      >
+                        <Icon name="Trash2" size={16} />
+                      </Button>
                     </div>
                   </div>
                   
@@ -146,10 +183,49 @@ const Admin = () => {
                     </div>
                   )}
                   
-                  {lead.file_name && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Icon name="Paperclip" size={16} />
-                      <span>Файл: {lead.file_name}</span>
+                  {lead.file_name && lead.file_data && (
+                    <div className="mb-3">
+                      <p className="text-sm font-medium text-muted-foreground mb-1">Прикрепленный файл:</p>
+                      <a 
+                        href={lead.file_data}
+                        download={lead.file_name}
+                        className="flex items-center gap-2 text-primary hover:underline"
+                      >
+                        <Icon name="Paperclip" size={16} />
+                        <span>{lead.file_name}</span>
+                        <Icon name="Download" size={16} />
+                      </a>
+                    </div>
+                  )}
+
+                  {deletingId === lead.id && (
+                    <div className="mt-4 p-4 border border-destructive rounded-lg bg-destructive/5">
+                      <p className="text-sm font-medium mb-2">Введите пароль администратора для удаления:</p>
+                      <div className="flex gap-2">
+                        <input
+                          type="password"
+                          value={deletePassword}
+                          onChange={(e) => setDeletePassword(e.target.value)}
+                          placeholder="Пароль"
+                          className="flex-1 px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          onKeyDown={(e) => e.key === 'Enter' && handleDelete(lead.id)}
+                        />
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDelete(lead.id)}
+                        >
+                          Удалить
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setDeletingId(null);
+                            setDeletePassword('');
+                          }}
+                        >
+                          Отмена
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </Card>
