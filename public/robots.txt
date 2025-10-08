@@ -1,19 +1,47 @@
-User-agent: Googlebot
-Allow: /
+# Robots.txt для https://ktcybr.ru
 
-User-agent: Bingbot
-Allow: /
-
+# Яндекс (главный поисковик РФ)
 User-agent: Yandex
 Allow: /
+Disallow: /admin
+Host: ktcybr.ru
 
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+
+# Mail.ru
+User-agent: Mail.RU_Bot
+Allow: /
+Disallow: /admin
+
+# Rambler
+User-agent: StackRambler
+Allow: /
+Disallow: /admin
+
+# Спутник (госпоисковик)
+User-agent: Sputnik
+Allow: /
+Disallow: /admin
+
+# Социальные сети
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
+# Все остальные
 User-agent: *
 Allow: /
+Disallow: /admin
 
-Sitemap: https://techglobal.ru/sitemap.xml
+# Карта сайта
+Sitemap: https://ktcybr.ru/sitemap.xml
