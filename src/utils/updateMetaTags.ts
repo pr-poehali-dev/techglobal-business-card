@@ -79,7 +79,7 @@ export const updateMetaTags = (lang: 'ru' | 'en' | 'zh') => {
       twitterDescription.setAttribute('content', '中国特种设备和工业机械直接供应。运营超过10年。');
     }
   } else {
-    document.title = 'ТехГлобал — Поставки и продажа спецтехники и промышленного оборудования';
+    document.title = 'ТехГлобал — Поставки и продажа спецтехники и промышленного оборудования из КНР';
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
