@@ -4,35 +4,35 @@
   
   <!-- Главная страница (русская версия) -->
   <url>
-    <loc>https://ktcybr.ru/</loc>
+    <loc>https://techglobal.ru/</loc>
     <lastmod>2025-10-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://ktcybr.ru/en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://ktcybr.ru/zh"/>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://ktcybr.ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://techglobal.ru/en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://techglobal.ru/zh"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://techglobal.ru/"/>
   </url>
   
   <!-- Английская версия -->
   <url>
-    <loc>https://ktcybr.ru/en</loc>
+    <loc>https://techglobal.ru/en</loc>
     <lastmod>2025-10-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://ktcybr.ru/en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://ktcybr.ru/zh"/>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://ktcybr.ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://techglobal.ru/en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://techglobal.ru/zh"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://techglobal.ru/"/>
   </url>
   
   <!-- Китайская версия -->
   <url>
-    <loc>https://ktcybr.ru/zh</loc>
+    <loc>https://techglobal.ru/zh</loc>
     <lastmod>2025-10-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://ktcybr.ru/en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://ktcybr.ru/zh"/>
-    <xhtml:link rel="alternate" hreflang="ru" href="https://ktcybr.ru/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://techglobal.ru/en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://techglobal.ru/zh"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://techglobal.ru/"/>
   </url>
   
 </urlset>

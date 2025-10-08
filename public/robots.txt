@@ -1,10 +1,10 @@
-# Robots.txt для https://ktcybr.ru
+# Robots.txt для https://techglobal.ru
 
 # Яндекс (главный поисковик РФ)
 User-agent: Yandex
 Allow: /
 Disallow: /admin
-Host: ktcybr.ru
+Host: techglobal.ru
 
 # Google
 User-agent: Googlebot
@@ -44,4 +44,4 @@ Allow: /
 Disallow: /admin
 
 # Карта сайта
-Sitemap: https://ktcybr.ru/sitemap.xml
+Sitemap: https://techglobal.ru/sitemap.xml
