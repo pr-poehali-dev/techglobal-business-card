@@ -7,7 +7,7 @@ interface HeroSectionProps {
 
 const HeroSection = ({ scrollY, scrollToSection }: HeroSectionProps) => {
   return (
-    <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative h-[90vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img 
           src="https://cdn.poehali.dev/files/eeb50967-ac40-4f7e-8057-43d95d27d9ae.jpg" 
