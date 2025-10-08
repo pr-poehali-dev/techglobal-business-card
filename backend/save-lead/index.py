@@ -53,18 +53,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
             cur = conn.cursor()
             
-            ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', '') or ''
-            user_agent = event.get('headers', {}).get('user-agent', '') or ''
-            
             safe_name = name.replace("'", "''")
             safe_phone = phone.replace("'", "''")
             safe_message = (message or '').replace("'", "''")
             safe_file = (file_name or '').replace("'", "''")
-            safe_ip = ip_address.replace("'", "''")
-            safe_ua = user_agent.replace("'", "''")
             
             print(f"Attempting DB insert: {name}, {phone}")
-            sql = f"INSERT INTO t_p90963059_techglobal_business_.leads (name, phone, message, file_name, ip_address, user_agent) VALUES ('{safe_name}', '{safe_phone}', '{safe_message}', '{safe_file}', '{safe_ip}', '{safe_ua}')"
+            sql = f"INSERT INTO t_p90963059_techglobal_business_.leads (name, phone, message, file_name) VALUES ('{safe_name}', '{safe_phone}', '{safe_message}', '{safe_file}')"
             cur.execute(sql)
             
             cur.close()
