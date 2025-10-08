@@ -27,6 +27,11 @@ export const updateMetaTags = (lang: 'ru' | 'en' | 'zh') => {
       ogDescription.setAttribute('content', 'Direct supplies of special equipment and industrial machinery from China. 10 years in business. Flexible terms and competitive prices.');
     }
 
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://techglobal.ru/en');
+    }
+
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) {
       twitterTitle.setAttribute('content', 'TechGlobal — Special Equipment Supply from China');
@@ -59,6 +64,11 @@ export const updateMetaTags = (lang: 'ru' | 'en' | 'zh') => {
       ogDescription.setAttribute('content', '中国特种设备和工业机械直接供应。运营超过10年。灵活条款和优惠价格。');
     }
 
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://techglobal.ru/zh');
+    }
+
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) {
       twitterTitle.setAttribute('content', 'TechGlobal — 中国特种设备供应');
@@ -89,6 +99,11 @@ export const updateMetaTags = (lang: 'ru' | 'en' | 'zh') => {
     const ogDescription = document.querySelector('meta[property="og:description"]');
     if (ogDescription) {
       ogDescription.setAttribute('content', 'Прямые поставки спецтехники и промышленного оборудования из КНР. 10 лет на рынке. Гибкие условия и конкурентные цены.');
+    }
+
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://techglobal.ru');
     }
 
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
