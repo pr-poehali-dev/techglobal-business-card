@@ -55,7 +55,7 @@ const Admin = () => {
 
   const fetchLeads = async () => {
     try {
-      const response = await fetch('https://functions.poehali.dev/cce71dc9-c0a4-48cf-b2fe-4cfa3d97dfe5');
+      const response = await fetch('https://functions.poehali.dev/1fc2cbd9-568a-4928-ae37-0cee42d9dcc3');
       const data = await response.json();
       setLeads(data.leads || []);
     } catch (error) {
@@ -104,7 +104,7 @@ const Admin = () => {
     }
 
     try {
-      const response = await fetch('https://functions.poehali.dev/cd52d7e0-5ea1-4ea8-ba77-edb20dcc51c4', {
+      const response = await fetch('https://functions.poehali.dev/a11975fe-9361-4ac1-b328-9f59532b9dc4', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clear_all: true, password: clearAllPassword })

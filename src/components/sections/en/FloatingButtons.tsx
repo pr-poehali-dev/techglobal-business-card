@@ -37,15 +37,7 @@ const FloatingButtons = () => {
       >
         <Icon name="MessageCircle" size={28} className="text-white" />
       </a>
-      <a 
-        href="https://t.me/79959658000" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="w-14 h-14 bg-[#0088cc] hover:bg-[#0077b5] rounded-full flex items-center justify-center animate-pulse-soft hover:shadow-xl transition-all hover:scale-110"
-        aria-label="Telegram"
-      >
-        <Icon name="Send" size={26} className="text-white" />
-      </a>
+
     </div>
   );
 };
