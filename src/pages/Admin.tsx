@@ -23,6 +23,7 @@ interface Lead {
 const Admin = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
@@ -34,15 +35,17 @@ const Admin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showStats, setShowStats] = useState(false);
 
+  const ADMIN_USERNAME = "admin";
   const ADMIN_PASSWORD = "Ktcybr21!";
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       localStorage.setItem('admin_auth', 'true');
+      localStorage.setItem('admin_username', username);
     } else {
-      alert('Неверный пароль');
+      alert('Неверное имя пользователя или пароль');
     }
   };
 
@@ -204,6 +207,8 @@ const Admin = () => {
   if (!isAuthenticated) {
     return (
       <AdminLogin
+        username={username}
+        setUsername={setUsername}
         password={password}
         setPassword={setPassword}
         handleLogin={handleLogin}

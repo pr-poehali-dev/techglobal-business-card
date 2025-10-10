@@ -22,9 +22,17 @@ const AdminHeader = ({
   showClearAll,
   setIsAuthenticated
 }: AdminHeaderProps) => {
+  const adminUsername = localStorage.getItem('admin_username') || 'admin';
+  
   return (
     <div className="flex justify-between items-center mb-8">
-      <h1 className="text-3xl font-bold">Заявки с сайта</h1>
+      <div>
+        <h1 className="text-3xl font-bold">Заявки с сайта</h1>
+        <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+          <Icon name="User" size={16} />
+          Пользователь: <span className="font-medium">{adminUsername}</span>
+        </p>
+      </div>
       <div className="flex gap-4">
         <Button
           variant={showStats ? "default" : "outline"}
@@ -62,6 +70,7 @@ const AdminHeader = ({
           variant="outline"
           onClick={() => {
             localStorage.removeItem('admin_auth');
+            localStorage.removeItem('admin_username');
             setIsAuthenticated(false);
           }}
         >
