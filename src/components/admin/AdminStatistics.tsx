@@ -29,29 +29,40 @@ const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
 const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
   return (
     <div className="space-y-6 mb-6">
-      <Card className="p-6 bg-gradient-to-r from-blue-50 to-purple-50">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-              <Icon name="BarChart3" size={24} />
-              Счетчик посещений сайта
-            </h3>
-            <p className="text-sm text-muted-foreground mb-3">
-              Статистика посещений доступна в Яндекс.Метрике
-            </p>
+      <Card className="p-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 border-primary/20">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                <Icon name="Users" size={28} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground">
+                  Счетчик посещений сайта
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Полная статистика в Яндекс.Метрике
+                </p>
+              </div>
+            </div>
             <a
               href="https://metrika.yandex.ru/dashboard?id=101026698"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-all hover:shadow-lg font-medium"
             >
-              <Icon name="ExternalLink" size={18} />
-              Открыть Яндекс.Метрику
+              <Icon name="BarChart3" size={18} />
+              Открыть статистику
+              <Icon name="ExternalLink" size={16} />
             </a>
           </div>
-          <div className="text-right">
-            <div className="text-sm text-muted-foreground">ID счетчика</div>
-            <div className="text-2xl font-bold text-primary">101026698</div>
+          <div className="flex flex-col items-end gap-2">
+            <div className="text-xs text-muted-foreground uppercase tracking-wider">ID счетчика</div>
+            <div className="text-3xl font-bold text-primary">101026698</div>
+            <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+              <Icon name="CheckCircle2" size={14} />
+              Активен
+            </div>
           </div>
         </div>
       </Card>

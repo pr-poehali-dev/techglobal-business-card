@@ -8,45 +8,45 @@ const GallerySection = ({ visibleCards }: GallerySectionProps) => {
   const galleryItems = [
     {
       index: 0,
-      image: "https://cdn.poehali.dev/projects/58de4a73-eb2a-4a4e-b132-1fe940434eae/files/afb9b349-cf72-4dd6-8137-a503993af318.jpg",
-      alt: "Экскаватор на стройплощадке",
-      title: "Экскаваторы",
-      description: "Современные экскаваторы для строительных и земляных работ любой сложности"
+      image: "https://cdn.poehali.dev/files/dd352148-f30b-4be1-8f2a-ffadcb5790ba.jpeg",
+      alt: "Дорожный каток XCMG",
+      title: "Дорожная техника",
+      description: "Катки, асфальтоукладчики и дорожно-строительное оборудование"
     },
     {
       index: 1,
-      image: "https://cdn.poehali.dev/projects/58de4a73-eb2a-4a4e-b132-1fe940434eae/files/eb04b2a6-8f97-4409-b7c4-f931a43a7c47.jpg",
-      alt: "Генераторное оборудование",
-      title: "Генераторы",
-      description: "Дизельные генераторы и электростанции для промышленных объектов"
-    },
-    {
-      index: 2,
-      image: "https://cdn.poehali.dev/projects/58de4a73-eb2a-4a4e-b132-1fe940434eae/files/72c23df5-9c2c-4a5f-8c7c-ffd540a9b3f5.jpg",
-      alt: "Запасные части к грузовикам",
-      title: "Запчасти для грузовиков",
-      description: "Оригинальные и качественные запасные части для грузовой техники всех марок"
-    },
-    {
-      index: 3,
       image: "https://cdn.poehali.dev/files/1e61a691-b34e-4b3a-85aa-cb911df07abd.jpeg",
       alt: "Грузовой тягач JAC",
       title: "Грузовая техника",
       description: "Тягачи, самосвалы и грузовики JAC, SHACMAN, FAW для логистики"
     },
     {
-      index: 4,
+      index: 2,
       image: "https://cdn.poehali.dev/files/04c933b4-21d2-4676-9c16-78664b1bdc0f.jpeg",
       alt: "Погрузчик LiuGong",
-      title: "Погрузчики",
-      description: "Фронтальные и телескопические погрузчики для складов и строительных площадок"
+      title: "Строительная техника",
+      description: "Экскаваторы, бульдозеры, погрузчики для любых строительных задач"
     },
     {
-      index: 5,
+      index: 3,
       image: "https://cdn.poehali.dev/files/6a84bba9-a7c8-49b2-a49b-5ac925118c26.jpeg",
       alt: "Автокран XCMG",
       title: "Грузоподъёмная техника",
       description: "Автокраны и подъёмное оборудование XCMG высокой грузоподъёмности"
+    },
+    {
+      index: 4,
+      image: "https://cdn.poehali.dev/files/cff960d3-bb8d-4972-b1a8-0d3414373563.jpeg",
+      alt: "Буровое оборудование",
+      title: "Буровая техника",
+      description: "Буровые установки для геологоразведки и строительства"
+    },
+    {
+      index: 5,
+      image: "https://cdn.poehali.dev/files/8430ac0a-38db-4560-bb9f-63944e187cb4.png",
+      alt: "Генераторное оборудование",
+      title: "Генераторное оборудование",
+      description: "Дизельные генераторы и электростанции для промышленных объектов"
     }
   ];
 
