@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Icon from "@/components/ui/icon";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -27,6 +30,35 @@ interface AdminStatisticsProps {
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
 
 const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
+  const [period, setPeriod] = useState<'day' | 'week' | 'month'>('week');
+
+  const getPeriodLabel = () => {
+    switch(period) {
+      case 'day': return 'за сегодня';
+      case 'week': return 'за неделю';
+      case 'month': return 'за месяц';
+    }
+  };
+
+  const getFilteredLeads = () => {
+    const now = Date.now();
+    const dayMs = 24 * 60 * 60 * 1000;
+    let timeframe = 0;
+    
+    switch(period) {
+      case 'day': timeframe = dayMs; break;
+      case 'week': timeframe = 7 * dayMs; break;
+      case 'month': timeframe = 30 * dayMs; break;
+    }
+    
+    return leads.filter(l => {
+      const diff = now - new Date(l.created_at).getTime();
+      return diff < timeframe;
+    });
+  };
+
+  const filteredLeads = getFilteredLeads();
+
   return (
     <div className="space-y-6 mb-6">
       <Card className="p-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 border-primary/20">
@@ -68,29 +100,113 @@ const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
       </Card>
 
       <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Icon name="TrendingUp" size={20} />
-            Статистика посещений (Яндекс.Метрика)
+            <Icon name="BarChart3" size={20} />
+            Статистика посещений сайта
           </h3>
-          <a
-            href="https://metrika.yandex.ru/dashboard?id=101026698"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-primary hover:underline flex items-center gap-1"
-          >
-            Полная версия
-            <Icon name="ExternalLink" size={14} />
-          </a>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={period === 'day' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setPeriod('day')}
+            >
+              День
+            </Button>
+            <Button
+              variant={period === 'week' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setPeriod('week')}
+            >
+              Неделя
+            </Button>
+            <Button
+              variant={period === 'month' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setPeriod('month')}
+            >
+              Месяц
+            </Button>
+          </div>
         </div>
-        <div className="relative w-full" style={{ minHeight: '400px' }}>
-          <iframe
-            src="https://metrika.yandex.ru/dashboard?id=101026698"
-            className="w-full h-[600px] border rounded-lg"
-            title="Яндекс.Метрика"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-          />
-        </div>
+        
+        <Tabs defaultValue="yandex" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="yandex" className="flex items-center gap-2">
+              <Icon name="TrendingUp" size={16} />
+              Яндекс.Метрика
+            </TabsTrigger>
+            <TabsTrigger value="google" className="flex items-center gap-2">
+              <Icon name="Globe" size={16} />
+              Google Analytics
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="yandex" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Данные {getPeriodLabel()} • ID: 101026698
+              </p>
+              <a
+                href="https://metrika.yandex.ru/dashboard?id=101026698"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline flex items-center gap-1"
+              >
+                Открыть в Метрике
+                <Icon name="ExternalLink" size={14} />
+              </a>
+            </div>
+            <div className="relative w-full" style={{ minHeight: '400px' }}>
+              <iframe
+                src="https://metrika.yandex.ru/dashboard?id=101026698"
+                className="w-full h-[600px] border rounded-lg bg-white"
+                title="Яндекс.Метрика"
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+              />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="google" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Данные {getPeriodLabel()} • Google Analytics
+              </p>
+              <a
+                href="https://analytics.google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline flex items-center gap-1"
+              >
+                Открыть в Analytics
+                <Icon name="ExternalLink" size={14} />
+              </a>
+            </div>
+            <div className="relative w-full" style={{ minHeight: '400px' }}>
+              <div className="w-full h-[600px] border rounded-lg bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+                <div className="text-center space-y-4 p-8">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                    <Icon name="Globe" size={32} className="text-primary" />
+                  </div>
+                  <h4 className="text-xl font-semibold">Google Analytics</h4>
+                  <p className="text-muted-foreground max-w-md">
+                    Для отображения статистики Google Analytics необходимо настроить интеграцию в настройках проекта
+                  </p>
+                  <a
+                    href="https://analytics.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-all"
+                  >
+                    <Icon name="Settings" size={18} />
+                    Настроить интеграцию
+                    <Icon name="ExternalLink" size={16} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -100,8 +216,8 @@ const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
               <Icon name="Mail" size={20} className="text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Всего заявок</p>
-              <p className="text-2xl font-bold">{leads.length}</p>
+              <p className="text-sm text-muted-foreground">Заявок {getPeriodLabel()}</p>
+              <p className="text-2xl font-bold">{filteredLeads.length}</p>
             </div>
           </div>
         </Card>
@@ -111,24 +227,19 @@ const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
               <Icon name="Paperclip" size={20} className="text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">С файлами</p>
-              <p className="text-2xl font-bold">{stats.filesData[0].value}</p>
+              <p className="text-sm text-muted-foreground">С файлами {getPeriodLabel()}</p>
+              <p className="text-2xl font-bold">{filteredLeads.filter(l => l.file_name).length}</p>
             </div>
           </div>
         </Card>
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Icon name="Calendar" size={20} className="text-purple-600" />
+              <Icon name="TrendingUp" size={20} className="text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">За последние 7 дней</p>
-              <p className="text-2xl font-bold">
-                {leads.filter(l => {
-                  const diff = Date.now() - new Date(l.created_at).getTime();
-                  return diff < 7 * 24 * 60 * 60 * 1000;
-                }).length}
-              </p>
+              <p className="text-sm text-muted-foreground">Всего заявок</p>
+              <p className="text-2xl font-bold">{leads.length}</p>
             </div>
           </div>
         </Card>
