@@ -67,6 +67,32 @@ const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
         </div>
       </Card>
 
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <Icon name="TrendingUp" size={20} />
+            Статистика посещений (Яндекс.Метрика)
+          </h3>
+          <a
+            href="https://metrika.yandex.ru/dashboard?id=101026698"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-primary hover:underline flex items-center gap-1"
+          >
+            Полная версия
+            <Icon name="ExternalLink" size={14} />
+          </a>
+        </div>
+        <div className="relative w-full" style={{ minHeight: '400px' }}>
+          <iframe
+            src="https://metrika.yandex.ru/dashboard?id=101026698"
+            className="w-full h-[600px] border rounded-lg"
+            title="Яндекс.Метрика"
+            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+          />
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
