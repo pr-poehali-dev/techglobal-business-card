@@ -6,6 +6,7 @@ import ServicesSection from "@/components/sections/ServicesSection";
 import GallerySection from "@/components/sections/GallerySection";
 import AdvantagesSection from "@/components/sections/AdvantagesSection";
 import OurAdvantagesSection from "@/components/sections/OurAdvantagesSection";
+import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import WorkflowSection from "@/components/sections/WorkflowSection";
 import ContactSection from "@/components/sections/ContactSection";
 import Footer from "@/components/sections/Footer";
@@ -130,6 +131,7 @@ const Index = () => {
       <GallerySection visibleCards={visibleCards} />
       <AdvantagesSection visibleCards={visibleCards} />
       <OurAdvantagesSection />
+      <TestimonialsSection visibleCards={visibleCards} />
       <WorkflowSection visibleCards={visibleCards} scrollToSection={scrollToSection} />
       <ContactSection 
         formData={formData}
