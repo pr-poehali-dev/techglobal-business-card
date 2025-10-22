@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Icon from "@/components/ui/icon";
+import GoogleAnalyticsWidget from "@/components/admin/GoogleAnalyticsWidget";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface Lead {
@@ -168,9 +169,9 @@ const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
           </TabsContent>
           
           <TabsContent value="google" className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-muted-foreground">
-                Данные {getPeriodLabel()} • Google Analytics
+                Данные {getPeriodLabel()} • Google Analytics (G-KHVNWKVZVQ)
               </p>
               <a
                 href="https://analytics.google.com"
@@ -182,29 +183,7 @@ const AdminStatistics = ({ leads, stats }: AdminStatisticsProps) => {
                 <Icon name="ExternalLink" size={14} />
               </a>
             </div>
-            <div className="relative w-full" style={{ minHeight: '400px' }}>
-              <div className="w-full h-[600px] border rounded-lg bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
-                <div className="text-center space-y-4 p-8">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                    <Icon name="Globe" size={32} className="text-primary" />
-                  </div>
-                  <h4 className="text-xl font-semibold">Google Analytics</h4>
-                  <p className="text-muted-foreground max-w-md">
-                    Для отображения статистики Google Analytics необходимо настроить интеграцию в настройках проекта
-                  </p>
-                  <a
-                    href="https://analytics.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-all"
-                  >
-                    <Icon name="Settings" size={18} />
-                    Настроить интеграцию
-                    <Icon name="ExternalLink" size={16} />
-                  </a>
-                </div>
-              </div>
-            </div>
+            <GoogleAnalyticsWidget period={period} />
           </TabsContent>
         </Tabs>
       </Card>

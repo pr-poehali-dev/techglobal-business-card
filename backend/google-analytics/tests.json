@@ -1,0 +1,30 @@
+{
+  "tests": [
+    {
+      "name": "Get analytics for week period",
+      "method": "GET",
+      "path": "/?period=week",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "configured": "boolean"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get analytics for day period",
+      "method": "GET",
+      "path": "/?period=day",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "configured": "boolean"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Handle OPTIONS request",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}
