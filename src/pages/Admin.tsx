@@ -48,7 +48,7 @@ const Admin = () => {
   const [showStats, setShowStats] = useState(false);
   const [activeTab, setActiveTab] = useState<'leads' | 'reviews'>('leads');
 
-  const ADMIN_USERNAME = "admin";
+  const ADMIN_USERNAME = "Techglobal";
   const ADMIN_PASSWORD = "Ktcybr21";
 
   const handleLogin = (e: React.FormEvent) => {
