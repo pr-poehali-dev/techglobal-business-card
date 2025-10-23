@@ -9,6 +9,7 @@ import IndexEn from "./pages/IndexEn";
 import IndexZh from "./pages/IndexZh";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import WeChatButton from "@/components/ui/wechat-button";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => {
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <WeChatButton />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
