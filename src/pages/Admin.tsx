@@ -36,7 +36,7 @@ const Admin = () => {
   const [showStats, setShowStats] = useState(false);
 
   const ADMIN_USERNAME = "admin";
-  const ADMIN_PASSWORD = "Ktcybr21!";
+  const ADMIN_PASSWORD = "Лесник21";
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
