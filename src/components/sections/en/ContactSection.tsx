@@ -80,13 +80,13 @@ const ContactSection = ({
                       WhatsApp
                     </a>
                     <a 
-                      href="https://t.me/8613165540208" 
+                      href="weixin://dl/chat?KMCi05" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-lg transition-colors text-sm font-medium"
+                      className="flex items-center gap-2 px-4 py-2 bg-[#09B83E] hover:bg-[#07A035] text-white rounded-lg transition-colors text-sm font-medium"
                     >
-                      <Icon name="Send" size={18} />
-                      Telegram
+                      <Icon name="MessageSquare" size={18} />
+                      WeChat
                     </a>
                   </div>
                 </div>
