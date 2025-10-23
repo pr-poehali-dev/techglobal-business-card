@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
@@ -21,6 +22,17 @@ const ContactSection = ({
   submitStatus,
   handleSubmit
 }: ContactSectionProps) => {
+  const [wechatCopied, setWechatCopied] = useState(false);
+
+  const handleWeChatClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigator.clipboard.writeText('KMCi05').then(() => {
+      setWechatCopied(true);
+      setTimeout(() => setWechatCopied(false), 2000);
+    });
+    window.open('weixin://dl/chat?KMCi05', '_blank');
+  };
+
   return (
     <section id="contact" className="py-20 bg-gradient-to-br from-primary/5 to-background">
       <div className="container mx-auto px-4">
@@ -79,15 +91,18 @@ const ContactSection = ({
                       <Icon name="MessageCircle" size={18} />
                       WhatsApp
                     </a>
-                    <a 
-                      href="weixin://dl/chat?KMCi05" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-[#09B83E] hover:bg-[#07A035] text-white rounded-lg transition-colors text-sm font-medium"
+                    <button
+                      onClick={handleWeChatClick}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#09B83E] hover:bg-[#07A035] text-white rounded-lg transition-colors text-sm font-medium relative"
                     >
                       <Icon name="MessageSquare" size={18} />
                       WeChat
-                    </a>
+                      {wechatCopied && (
+                        <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-3 py-1 rounded whitespace-nowrap">
+                          ID copied: KMCi05
+                        </span>
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
