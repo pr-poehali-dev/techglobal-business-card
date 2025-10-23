@@ -9,6 +9,7 @@ import AdminFilters from "@/components/admin/AdminFilters";
 import AdminStatistics from "@/components/admin/AdminStatistics";
 import LeadCard from "@/components/admin/LeadCard";
 import ClearAllDialog from "@/components/admin/ClearAllDialog";
+import AdminReviews from "@/components/admin/AdminReviews";
 
 interface Lead {
   id: number;
@@ -20,8 +21,19 @@ interface Lead {
   created_at: string;
 }
 
+interface Review {
+  id: number;
+  company: string;
+  author: string;
+  position: string;
+  text: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+}
+
 const Admin = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +46,7 @@ const Admin = () => {
   const [dateTo, setDateTo] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showStats, setShowStats] = useState(false);
+  const [activeTab, setActiveTab] = useState<'leads' | 'reviews'>('leads');
 
   const ADMIN_USERNAME = "admin";
   const ADMIN_PASSWORD = "Ktcybr21";
@@ -65,6 +78,16 @@ const Admin = () => {
       console.error('Error fetching leads:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/e7c476fa-db39-449b-9c24-53f87be65589');
+      const data = await response.json();
+      setReviews(data.reviews || []);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
     }
   };
 
@@ -131,6 +154,7 @@ const Admin = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
     fetchLeads();
+    fetchReviews();
   }, [isAuthenticated]);
 
   const getStatistics = () => {
@@ -230,92 +254,119 @@ const Admin = () => {
           setIsAuthenticated={setIsAuthenticated}
         />
 
-        <AdminFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          dateFrom={dateFrom}
-          setDateFrom={setDateFrom}
-          dateTo={dateTo}
-          setDateTo={setDateTo}
-        />
+        <div className="flex gap-2 mb-6">
+          <Button
+            variant={activeTab === 'leads' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('leads')}
+            className="gap-2"
+          >
+            <Icon name="FileText" size={18} />
+            Заявки ({leads.length})
+          </Button>
+          <Button
+            variant={activeTab === 'reviews' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('reviews')}
+            className="gap-2"
+          >
+            <Icon name="MessageSquare" size={18} />
+            Отзывы ({reviews.length})
+          </Button>
+        </div>
 
-        {filteredLeads.length !== leads.length && (
-          <Card className="p-4 mb-6 bg-primary/5">
-            <p className="text-sm">
-              Показано заявок: <strong>{filteredLeads.length}</strong> из <strong>{leads.length}</strong>
-              {(searchTerm || dateFrom || dateTo) && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setDateFrom('');
-                    setDateTo('');
-                  }}
-                  className="ml-2"
-                >
-                  Сбросить фильтры
-                </Button>
-              )}
-            </p>
-          </Card>
-        )}
+        {activeTab === 'leads' && (
+          <>
+            <AdminFilters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              dateFrom={dateFrom}
+              setDateFrom={setDateFrom}
+              dateTo={dateTo}
+              setDateTo={setDateTo}
+            />
 
-        {showStats && (
-          <AdminStatistics leads={leads} stats={stats} />
-        )}
-
-        {showClearAll && !showStats && (
-          <ClearAllDialog
-            leadsCount={leads.length}
-            clearAllPassword={clearAllPassword}
-            setClearAllPassword={setClearAllPassword}
-            handleClearAll={handleClearAll}
-            setShowClearAll={setShowClearAll}
-          />
-        )}
-
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-            <p className="mt-4 text-muted-foreground">Загрузка заявок...</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredLeads.length === 0 && leads.length > 0 ? (
-              <Card className="p-8 text-center">
-                <Icon name="Filter" size={48} className="mx-auto mb-4 text-muted-foreground" />
-                <p className="text-lg text-muted-foreground mb-2">По вашим фильтрам ничего не найдено</p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setDateFrom('');
-                    setDateTo('');
-                  }}
-                >
-                  Сбросить фильтры
-                </Button>
+            {filteredLeads.length !== leads.length && (
+              <Card className="p-4 mb-6 bg-primary/5">
+                <p className="text-sm">
+                  Показано заявок: <strong>{filteredLeads.length}</strong> из <strong>{leads.length}</strong>
+                  {(searchTerm || dateFrom || dateTo) && (
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setDateFrom('');
+                        setDateTo('');
+                      }}
+                      className="ml-2"
+                    >
+                      Сбросить фильтры
+                    </Button>
+                  )}
+                </p>
               </Card>
-            ) : filteredLeads.length === 0 ? (
-              <Card className="p-8 text-center">
-                <Icon name="Inbox" size={48} className="mx-auto mb-4 text-muted-foreground" />
-                <p className="text-lg text-muted-foreground">Заявок пока нет</p>
-              </Card>
-            ) : (
-              filteredLeads.map((lead) => (
-                <LeadCard
-                  key={lead.id}
-                  lead={lead}
-                  deletingId={deletingId}
-                  deletePassword={deletePassword}
-                  setDeletePassword={setDeletePassword}
-                  setDeletingId={setDeletingId}
-                  handleDelete={handleDelete}
-                />
-              ))
             )}
-          </div>
+
+            {showStats && (
+              <AdminStatistics leads={leads} stats={stats} />
+            )}
+
+            {showClearAll && !showStats && (
+              <ClearAllDialog
+                leadsCount={leads.length}
+                clearAllPassword={clearAllPassword}
+                setClearAllPassword={setClearAllPassword}
+                handleClearAll={handleClearAll}
+                setShowClearAll={setShowClearAll}
+              />
+            )}
+
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+                <p className="mt-4 text-muted-foreground">Загрузка заявок...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredLeads.length === 0 && leads.length > 0 ? (
+                  <Card className="p-8 text-center">
+                    <Icon name="Filter" size={48} className="mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-lg text-muted-foreground mb-2">По вашим фильтрам ничего не найдено</p>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSearchTerm('');
+                        setDateFrom('');
+                        setDateTo('');
+                      }}
+                    >
+                      Сбросить фильтры
+                    </Button>
+                  </Card>
+                ) : filteredLeads.length === 0 ? (
+                  <Card className="p-8 text-center">
+                    <Icon name="Inbox" size={48} className="mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-lg text-muted-foreground">Заявок пока нет</p>
+                  </Card>
+                ) : (
+                  filteredLeads.map((lead) => (
+                    <LeadCard
+                      key={lead.id}
+                      lead={lead}
+                      deletingId={deletingId}
+                      deletePassword={deletePassword}
+                      setDeletePassword={setDeletePassword}
+                      setDeletingId={setDeletingId}
+                      handleDelete={handleDelete}
+                    />
+                  ))
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTab === 'reviews' && (
+          <AdminReviews reviews={reviews} onRefresh={fetchReviews} />
         )}
       </div>
     </div>

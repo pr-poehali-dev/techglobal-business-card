@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "Save review",
+      "method": "POST",
+      "body": {
+        "company": "ООО Тест",
+        "author": "Иван Тестов",
+        "position": "Директор",
+        "text": "Отличный сервис!"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

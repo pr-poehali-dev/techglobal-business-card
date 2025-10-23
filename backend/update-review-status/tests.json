@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "Approve review",
+      "method": "POST",
+      "body": {
+        "id": 1,
+        "action": "approve",
+        "password": "Ktcybr21"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -45,13 +45,10 @@ const TestimonialsSection = ({ visibleCards }: TestimonialsSectionProps) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('https://functions.poehali.dev/a1f9e107-650b-48e2-b7c0-88cf2e63eed4', {
+      const response = await fetch('https://functions.poehali.dev/dfb63cde-7364-4037-8203-5d8e55d48396', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'review',
-          ...reviewData
-        })
+        body: JSON.stringify(reviewData)
       });
 
       if (response.ok) {
