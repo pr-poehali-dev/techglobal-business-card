@@ -125,7 +125,11 @@ const Admin = () => {
       return;
     }
 
-    if (!confirm(`Вы уверены? Это удалит все ${leads.length} заявок!`)) {
+    const confirmMessage = dateFrom || dateTo 
+      ? `Вы уверены? Это удалит ${filteredLeads.length} заявок ${dateFrom && dateTo ? `с ${new Date(dateFrom).toLocaleDateString('ru-RU')} по ${new Date(dateTo).toLocaleDateString('ru-RU')}` : dateFrom ? `начиная с ${new Date(dateFrom).toLocaleDateString('ru-RU')}` : `до ${new Date(dateTo).toLocaleDateString('ru-RU')}`}!`
+      : `Вы уверены? Это удалит ВСЕ ${leads.length} заявок!`;
+
+    if (!confirm(confirmMessage)) {
       return;
     }
 
@@ -133,15 +137,22 @@ const Admin = () => {
       const response = await fetch('https://functions.poehali.dev/a11975fe-9361-4ac1-b328-9f59532b9dc4', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clear_all: true, password: clearAllPassword })
+        body: JSON.stringify({ 
+          clear_all: true, 
+          password: clearAllPassword,
+          date_from: dateFrom || null,
+          date_to: dateTo || null
+        })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message || 'Все заявки удалены!');
+        alert(data.message || 'Заявки удалены!');
         setClearAllPassword('');
         setShowClearAll(false);
+        setDateFrom('');
+        setDateTo('');
         fetchLeads();
       } else {
         alert(data.error || 'Ошибка очистки');
@@ -312,11 +323,15 @@ const Admin = () => {
 
             {showClearAll && !showStats && (
               <ClearAllDialog
-                leadsCount={leads.length}
+                leadsCount={filteredLeads.length}
                 clearAllPassword={clearAllPassword}
                 setClearAllPassword={setClearAllPassword}
                 handleClearAll={handleClearAll}
                 setShowClearAll={setShowClearAll}
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                setDateFrom={setDateFrom}
+                setDateTo={setDateTo}
               />
             )}
 

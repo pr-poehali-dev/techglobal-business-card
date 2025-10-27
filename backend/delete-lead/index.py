@@ -39,6 +39,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     lead_id = form_data.get('id', 0)
     password = form_data.get('password', '')
     clear_all = form_data.get('clear_all', False)
+    date_from = form_data.get('date_from')
+    date_to = form_data.get('date_to')
     
     ADMIN_PASSWORD = 'Ktcybr21'
     
@@ -75,13 +77,32 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         cur = conn.cursor()
         
         if clear_all:
-            cur.execute("SELECT COUNT(*) FROM t_p90963059_techglobal_business_.leads")
+            where_conditions = []
+            if date_from:
+                where_conditions.append(f"created_at >= '{date_from}'")
+            if date_to:
+                where_conditions.append(f"created_at <= '{date_to} 23:59:59'")
+            
+            where_clause = ""
+            if where_conditions:
+                where_clause = " WHERE " + " AND ".join(where_conditions)
+            
+            cur.execute(f"SELECT COUNT(*) FROM t_p90963059_techglobal_business_.leads{where_clause}")
             count = cur.fetchone()[0]
             
-            cur.execute("DELETE FROM t_p90963059_techglobal_business_.leads")
+            cur.execute(f"DELETE FROM t_p90963059_techglobal_business_.leads{where_clause}")
             
             cur.close()
             conn.close()
+            
+            message = f'Удалено заявок: {count}'
+            if date_from or date_to:
+                if date_from and date_to:
+                    message += f' (с {date_from} по {date_to})'
+                elif date_from:
+                    message += f' (начиная с {date_from})'
+                else:
+                    message += f' (до {date_to})'
             
             return {
                 'statusCode': 200,
@@ -89,7 +110,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'success': True, 'message': f'Удалено заявок: {count}', 'deleted': count}),
+                'body': json.dumps({'success': True, 'message': message, 'deleted': count}),
                 'isBase64Encoded': False
             }
         else:
