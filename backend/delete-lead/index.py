@@ -40,7 +40,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     password = form_data.get('password', '')
     clear_all = form_data.get('clear_all', False)
     
-    ADMIN_PASSWORD = 'Ktcybr21!'
+    ADMIN_PASSWORD = 'Ktcybr21'
     
     if password != ADMIN_PASSWORD:
         return {
