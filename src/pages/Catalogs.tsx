@@ -36,24 +36,14 @@ const Catalogs = () => {
     }
   };
 
-  const handleDownload = async (catalog: Catalog) => {
-    try {
-      fetch('https://functions.poehali.dev/763cc298-fef8-49ed-9aac-1ae3929a9e5d', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ catalog_id: catalog.id })
-      }).catch(() => {});
-      
-      const a = document.createElement('a');
-      a.href = catalog.file_url;
-      a.download = catalog.file_name;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-    }
+  const handleDownload = (catalog: Catalog) => {
+    fetch('https://functions.poehali.dev/763cc298-fef8-49ed-9aac-1ae3929a9e5d', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ catalog_id: catalog.id })
+    }).catch(() => {});
+    
+    window.open(catalog.file_url, '_blank');
   };
 
   const formatFileSize = (bytes: number) => {
