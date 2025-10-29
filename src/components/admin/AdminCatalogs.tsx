@@ -70,10 +70,10 @@ const AdminCatalogs = () => {
         });
         return;
       }
-      if (selectedFile.size > 10 * 1024 * 1024) {
+      if (selectedFile.size > 500 * 1024 * 1024) {
         toast({
           title: "Ошибка",
-          description: "Размер файла не должен превышать 10 МБ",
+          description: "Размер файла не должен превышать 500 МБ",
           variant: "destructive"
         });
         return;
@@ -247,7 +247,7 @@ const AdminCatalogs = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">PDF файл (макс. 10 МБ)</label>
+              <label className="block text-sm font-medium mb-2">PDF файл (макс. 500 МБ)</label>
               <Input
                 type="file"
                 accept=".pdf"
