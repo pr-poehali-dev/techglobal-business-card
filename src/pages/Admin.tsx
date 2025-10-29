@@ -10,6 +10,7 @@ import AdminStatistics from "@/components/admin/AdminStatistics";
 import LeadCard from "@/components/admin/LeadCard";
 import ClearAllDialog from "@/components/admin/ClearAllDialog";
 import AdminReviews from "@/components/admin/AdminReviews";
+import AdminCatalogs from "@/components/admin/AdminCatalogs";
 
 interface Lead {
   id: number;
@@ -46,7 +47,7 @@ const Admin = () => {
   const [dateTo, setDateTo] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showStats, setShowStats] = useState(false);
-  const [activeTab, setActiveTab] = useState<'leads' | 'reviews'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'reviews' | 'catalogs'>('leads');
 
   const ADMIN_USERNAME = "Techglobal";
   const ADMIN_PASSWORD = "Ktcybr21";
@@ -282,6 +283,14 @@ const Admin = () => {
             <Icon name="MessageSquare" size={18} />
             Отзывы ({reviews.length})
           </Button>
+          <Button
+            variant={activeTab === 'catalogs' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('catalogs')}
+            className="gap-2"
+          >
+            <Icon name="FolderOpen" size={18} />
+            Каталоги
+          </Button>
         </div>
 
         {activeTab === 'leads' && (
@@ -382,6 +391,10 @@ const Admin = () => {
 
         {activeTab === 'reviews' && (
           <AdminReviews reviews={reviews} onRefresh={fetchReviews} />
+        )}
+
+        {activeTab === 'catalogs' && (
+          <AdminCatalogs />
         )}
       </div>
     </div>

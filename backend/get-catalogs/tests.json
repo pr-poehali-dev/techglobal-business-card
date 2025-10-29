@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "GET запрос каталогов",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "catalogs": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
