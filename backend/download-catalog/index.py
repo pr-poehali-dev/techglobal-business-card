@@ -1,11 +1,13 @@
 import json
 import os
 import base64
+import urllib.request
+import urllib.parse
 from typing import Dict, Any
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: Download PDF catalog file by ID from database
+    Business: Download PDF catalog file by ID from database or external URL
     Args: event with httpMethod GET, queryStringParameters with id
           context with request_id
     Returns: HTTP response with PDF file as base64
@@ -68,7 +70,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         cur = conn.cursor()
         
         sql = f"""
-            SELECT file_data, file_name
+            SELECT file_data, file_name, file_url
             FROM t_p90963059_techglobal_business_.catalogs
             WHERE id = {int(catalog_id)}
         """
@@ -78,7 +80,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         cur.close()
         conn.close()
         
-        if not row or not row[0]:
+        if not row:
             return {
                 'statusCode': 404,
                 'headers': {
@@ -88,8 +90,29 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'Catalog not found'})
             }
         
-        file_data = bytes(row[0])
+        file_data = row[0]
         file_name = row[1]
+        file_url = row[2]
+        
+        if file_data:
+            pdf_bytes = bytes(file_data)
+        elif file_url:
+            parsed = urllib.parse.urlparse(file_url)
+            encoded_path = urllib.parse.quote(parsed.path.encode('utf-8'), safe='/')
+            encoded_url = f"{parsed.scheme}://{parsed.netloc}{encoded_path}"
+            
+            req = urllib.request.Request(encoded_url)
+            with urllib.request.urlopen(req, timeout=30) as response:
+                pdf_bytes = response.read()
+        else:
+            return {
+                'statusCode': 404,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'error': 'Catalog file not found'})
+            }
         
         return {
             'statusCode': 200,
@@ -98,7 +121,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'Access-Control-Allow-Origin': '*',
                 'Content-Disposition': f'attachment; filename="{file_name}"'
             },
-            'body': base64.b64encode(file_data).decode('utf-8'),
+            'body': base64.b64encode(pdf_bytes).decode('utf-8'),
             'isBase64Encoded': True
         }
     
