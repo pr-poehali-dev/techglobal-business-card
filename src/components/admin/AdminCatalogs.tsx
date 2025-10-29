@@ -36,6 +36,7 @@ const AdminCatalogs = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("xcmg");
   const [file, setFile] = useState<File | null>(null);
+  const [externalUrl, setExternalUrl] = useState("");
   const [deletePassword, setDeletePassword] = useState("");
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [viewPdf, setViewPdf] = useState<string | null>(null);
@@ -118,14 +119,72 @@ const AdminCatalogs = () => {
   };
 
   const handleUpload = async () => {
-    if (!title || !file) {
+    if (!title) {
       toast({
         title: "Ошибка",
-        description: "Заполните название и выберите файл",
+        description: "Заполните название каталога",
         variant: "destructive"
       });
       return;
     }
+
+    if (!file && !externalUrl) {
+      toast({
+        title: "Ошибка",
+        description: "Выберите файл или укажите ссылку",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Если указана внешняя ссылка - отправляем её напрямую
+    if (externalUrl) {
+      try {
+        setUploading(true);
+        const response = await fetch('https://functions.poehali.dev/dbd7cd76-78c9-47c7-a69e-3f4708c84bfc', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            category,
+            external_url: externalUrl
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Upload failed: ${response.status} ${errorText}`);
+        }
+
+        await response.json();
+        
+        toast({
+          title: "Успешно",
+          description: "Каталог добавлен"
+        });
+        setShowUploadForm(false);
+        setTitle("");
+        setDescription("");
+        setExternalUrl("");
+        fetchCatalogs();
+      } catch (error) {
+        console.error('Error adding catalog:', error);
+        toast({
+          title: "Ошибка",
+          description: error instanceof Error ? error.message : "Не удалось добавить каталог",
+          variant: "destructive"
+        });
+      } finally {
+        setUploading(false);
+      }
+      return;
+    }
+
+    // Загрузка файла чанками
+    if (!file) return;
 
     setUploading(true);
     setIsPaused(false);
@@ -203,6 +262,7 @@ const AdminCatalogs = () => {
         setTitle("");
         setDescription("");
         setFile(null);
+        setExternalUrl("");
         setUploadProgress(0);
         setUploadId(null);
         setCurrentChunk(0);
@@ -345,17 +405,59 @@ const AdminCatalogs = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">PDF файл (макс. 500 МБ)</label>
-              <Input
-                type="file"
-                accept=".pdf"
-                onChange={handleFileChange}
-              />
-              {file && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  Выбран файл: {file.name} ({formatFileSize(file.size)})
-                </p>
-              )}
+              <label className="block text-sm font-medium mb-2">Способ загрузки</label>
+              <div className="space-y-4">
+                <div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input 
+                      type="radio" 
+                      name="uploadType" 
+                      checked={!externalUrl} 
+                      onChange={() => setExternalUrl("")}
+                    />
+                    Загрузить файл с компьютера
+                  </label>
+                  {!externalUrl && (
+                    <div className="mt-2 ml-6">
+                      <Input
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                      />
+                      {file && (
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Выбран файл: {file.name} ({formatFileSize(file.size)})
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input 
+                      type="radio" 
+                      name="uploadType" 
+                      checked={!!externalUrl} 
+                      onChange={() => { setExternalUrl("https://s3.ru1.storage.beget.cloud/e3ff6c0453f8-focused-sabra/"); setFile(null); }}
+                    />
+                    Ссылка на файл в S3 (Beget)
+                  </label>
+                  {externalUrl && (
+                    <div className="mt-2 ml-6">
+                      <Input
+                        type="text"
+                        placeholder="https://s3.ru1.storage.beget.cloud/e3ff6c0453f8-focused-sabra/filename.pdf"
+                        value={externalUrl}
+                        onChange={(e) => setExternalUrl(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Вставьте полную ссылку на PDF файл в вашем S3 хранилище
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {(uploading || isPaused) && (

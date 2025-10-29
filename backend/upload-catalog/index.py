@@ -53,6 +53,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     title = body_data.get('title', '')
     description = body_data.get('description', '')
     category = body_data.get('category', 'xcmg')
+    external_url = body_data.get('external_url', '')
     file_data = body_data.get('file_data', '')
     file_name = body_data.get('file_name', 'catalog.pdf')
     chunk_index = body_data.get('chunk_index', 0)
@@ -60,8 +61,87 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     upload_id = body_data.get('upload_id', 'single')
     file_size = body_data.get('file_size', 0)
     
-    print(f"Upload request: chunk {chunk_index}/{total_chunks}, file: {file_name}, size: {file_size}")
+    print(f"Upload request: external_url={external_url}, chunk {chunk_index}/{total_chunks}, file: {file_name}, size: {file_size}")
     
+    database_url = os.environ.get('DATABASE_URL')
+    
+    if not database_url:
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'error': 'Database not configured'})
+        }
+    
+    # Если передана внешняя ссылка - сохраняем её без загрузки файла
+    if external_url:
+        if not title:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'error': 'Title is required'})
+            }
+        
+        try:
+            import psycopg2
+            import psycopg2.extensions
+            
+            conn = psycopg2.connect(database_url)
+            conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+            cur = conn.cursor()
+            
+            # Извлекаем имя файла из URL
+            file_name_from_url = external_url.split('/')[-1] if '/' in external_url else 'catalog.pdf'
+            
+            sql = f"""
+                INSERT INTO t_p90963059_techglobal_business_.catalogs 
+                (title, description, category, file_name, file_size, file_data, file_url)
+                VALUES ('{title.replace("'", "''")}', '{description.replace("'", "''")}', 
+                        '{category}', '{file_name_from_url.replace("'", "''")}', 0, 
+                        NULL, '{external_url.replace("'", "''")}')
+                RETURNING id
+            """
+            cur.execute(sql)
+            catalog_id = cur.fetchone()[0]
+            
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'success': True,
+                    'catalog': {
+                        'id': catalog_id,
+                        'title': title,
+                        'description': description,
+                        'category': category,
+                        'file_url': external_url
+                    }
+                }),
+                'isBase64Encoded': False
+            }
+        except Exception as e:
+            return {
+                'statusCode': 500,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'error': str(e)}),
+                'isBase64Encoded': False
+            }
+    
+    # Загрузка файла чанками
     if not title or not file_data:
         return {
             'statusCode': 400,
