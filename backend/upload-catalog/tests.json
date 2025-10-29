@@ -5,6 +5,22 @@
       "method": "OPTIONS",
       "path": "/",
       "expectedStatus": 200
+    },
+    {
+      "name": "Добавление каталога по внешней ссылке",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "title": "Test Catalog",
+        "description": "Test Description",
+        "category": "xcmg",
+        "external_url": "https://s3.ru1.storage.beget.cloud/test.pdf"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
     }
   ]
 }
