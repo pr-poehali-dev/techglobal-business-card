@@ -108,6 +108,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         metadata = TEMP_CHUNKS[upload_id]['metadata']
         
         file_bytes = b''.join([all_chunks[i] for i in sorted(all_chunks.keys())])
+        file_base64 = base64.b64encode(file_bytes).decode('utf-8')
         
         import psycopg2
         import psycopg2.extensions
@@ -120,10 +121,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             INSERT INTO t_p90963059_techglobal_business_.catalogs 
             (title, description, category, file_name, file_size, file_data, file_url)
             VALUES ('{metadata["title"].replace("'", "''")}', '{metadata["description"].replace("'", "''")}', 
-                    '{metadata["category"]}', '{metadata["file_name"].replace("'", "''")}', {metadata["file_size"]}, %s, '')
+                    '{metadata["category"]}', '{metadata["file_name"].replace("'", "''")}', {metadata["file_size"]}, 
+                    decode('{file_base64}', 'base64'), '')
             RETURNING id
         """
-        cur.execute(sql, (psycopg2.Binary(file_bytes),))
+        cur.execute(sql)
         catalog_id = cur.fetchone()[0]
         
         cur.close()
