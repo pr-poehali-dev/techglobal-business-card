@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import IndexEn from "./pages/IndexEn";
 import IndexZh from "./pages/IndexZh";
 import Admin from "./pages/Admin";
+import Catalogs from "./pages/Catalogs";
 import NotFound from "./pages/NotFound";
 import WeChatButton from "@/components/ui/wechat-button";
 
@@ -25,6 +26,7 @@ const App = () => {
             <Route path="/en" element={<IndexEn />} />
             <Route path="/zh" element={<IndexZh />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/catalogs" element={<Catalogs />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

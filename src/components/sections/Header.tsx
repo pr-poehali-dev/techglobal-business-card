@@ -35,6 +35,7 @@ const Header = ({ scrollToSection }: HeaderProps) => {
           <button onClick={() => scrollToSection('about')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">О компании</button>
           <button onClick={() => scrollToSection('services')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Услуги</button>
           <button onClick={() => scrollToSection('gallery')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Оборудование</button>
+          <Link to="/catalogs" className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Каталоги</Link>
           <button onClick={() => scrollToSection('contact')} className="text-xl font-medium hover:text-primary transition-colors whitespace-nowrap">Контакты</button>
         </nav>
         
@@ -90,6 +91,14 @@ const Header = ({ scrollToSection }: HeaderProps) => {
           >
             Оборудование
           </button>
+          <Link 
+            to="/catalogs"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
+            style={{ animationDelay: '175ms' }}
+          >
+            Каталоги
+          </Link>
           <button 
             onClick={() => handleMenuClick('contact')} 
             className="text-left text-lg font-medium hover:text-primary transition-colors py-2 animate-in slide-in-from-top-2 duration-300"
