@@ -211,16 +211,15 @@ const Catalogs = () => {
                       </div>
                       <div className="p-6">
                         <h3 className="text-xl font-semibold mb-2">{catalog.title}</h3>
-                        <p className="text-muted-foreground mb-2 line-clamp-2">{catalog.description}</p>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          Размер: {formatFileSize(catalog.file_size)}
-                        </p>
+                        {catalog.description && (
+                          <p className="text-muted-foreground mb-4 line-clamp-2">{catalog.description}</p>
+                        )}
                         <Button 
                           onClick={() => handleDownload(catalog)}
                           className="w-full gap-2"
                         >
                           <Icon name="Download" size={18} />
-                          Скачать
+                          Скачать PDF
                         </Button>
                       </div>
                     </div>
