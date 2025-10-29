@@ -36,27 +36,20 @@ const Catalogs = () => {
     }
   };
 
-  const handleDownload = async (catalog: Catalog) => {
-    try {
-      fetch('https://functions.poehali.dev/763cc298-fef8-49ed-9aac-1ae3929a9e5d', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ catalog_id: catalog.id })
-      }).catch(() => {});
+  const handleDownload = (catalog: Catalog) => {
+    fetch('https://functions.poehali.dev/763cc298-fef8-49ed-9aac-1ae3929a9e5d', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ catalog_id: catalog.id })
+    }).catch(() => {});
 
-      const response = await fetch(`https://functions.poehali.dev/dba10cc1-2227-43d6-bfdc-130bb8e4bc14?id=${catalog.id}`);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = catalog.file_name;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Download error:', error);
-    }
+    const a = document.createElement('a');
+    a.href = `https://functions.poehali.dev/dba10cc1-2227-43d6-bfdc-130bb8e4bc14?id=${catalog.id}`;
+    a.download = catalog.file_name;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const formatFileSize = (bytes: number) => {
