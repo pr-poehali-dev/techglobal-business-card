@@ -43,13 +43,7 @@ const Catalogs = () => {
       body: JSON.stringify({ catalog_id: catalog.id })
     }).catch(() => {});
     
-    const link = document.createElement('a');
-    link.href = catalog.file_url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.location.href = `https://functions.poehali.dev/dba10cc1-2227-43d6-bfdc-130bb8e4bc14?id=${catalog.id}`;
   };
 
   const formatFileSize = (bytes: number) => {
