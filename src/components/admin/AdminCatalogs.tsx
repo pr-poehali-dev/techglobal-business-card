@@ -29,6 +29,9 @@ const AdminCatalogs = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentChunk, setCurrentChunk] = useState(0);
+  const [uploadId, setUploadId] = useState<string | null>(null);
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -94,14 +97,24 @@ const AdminCatalogs = () => {
     }
 
     setUploading(true);
-    setUploadProgress(0);
+    setIsPaused(false);
+    if (!uploadId) {
+      setUploadProgress(0);
+      setCurrentChunk(0);
+      setUploadId(Math.random().toString(36).substring(7));
+    }
 
     try {
-      const CHUNK_SIZE = 5 * 1024 * 1024; // 5 МБ чанки
+      const CHUNK_SIZE = 5 * 1024 * 1024;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-      const uploadId = Math.random().toString(36).substring(7);
+      const currentUploadId = uploadId || Math.random().toString(36).substring(7);
       
-      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+      for (let chunkIndex = currentChunk; chunkIndex < totalChunks; chunkIndex++) {
+        if (isPaused) {
+          setCurrentChunk(chunkIndex);
+          break;
+        }
+
         const start = chunkIndex * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, file.size);
         const chunk = file.slice(start, end);
@@ -126,7 +139,7 @@ const AdminCatalogs = () => {
             file_name: file.name,
             chunk_index: chunkIndex,
             total_chunks: totalChunks,
-            upload_id: uploadId,
+            upload_id: currentUploadId,
             file_size: file.size
           })
         });
@@ -139,18 +152,23 @@ const AdminCatalogs = () => {
 
         const progress = Math.round(((chunkIndex + 1) / totalChunks) * 100);
         setUploadProgress(progress);
+        setCurrentChunk(chunkIndex + 1);
       }
 
-      toast({
-        title: "Успешно",
-        description: "Каталог загружен"
-      });
-      setShowUploadForm(false);
-      setTitle("");
-      setDescription("");
-      setFile(null);
-      setUploadProgress(0);
-      fetchCatalogs();
+      if (!isPaused) {
+        toast({
+          title: "Успешно",
+          description: "Каталог загружен"
+        });
+        setShowUploadForm(false);
+        setTitle("");
+        setDescription("");
+        setFile(null);
+        setUploadProgress(0);
+        setUploadId(null);
+        setCurrentChunk(0);
+        fetchCatalogs();
+      }
       
     } catch (error) {
       console.error('Error uploading catalog:', error);
@@ -159,10 +177,29 @@ const AdminCatalogs = () => {
         description: error instanceof Error ? error.message : "Не удалось загрузить каталог",
         variant: "destructive"
       });
-      setUploadProgress(0);
     } finally {
-      setUploading(false);
+      if (!isPaused) {
+        setUploading(false);
+      }
     }
+  };
+
+  const handlePauseResume = () => {
+    if (uploading && !isPaused) {
+      setIsPaused(true);
+      setUploading(false);
+    } else if (isPaused) {
+      setIsPaused(false);
+      handleUpload();
+    }
+  };
+
+  const handleCancelUpload = () => {
+    setIsPaused(false);
+    setUploading(false);
+    setUploadProgress(0);
+    setUploadId(null);
+    setCurrentChunk(0);
   };
 
   const handleDelete = async (catalogId: number) => {
@@ -282,7 +319,7 @@ const AdminCatalogs = () => {
               )}
             </div>
 
-            {uploading && (
+            {(uploading || isPaused) && (
               <div className="space-y-2">
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div 
@@ -291,24 +328,30 @@ const AdminCatalogs = () => {
                   ></div>
                 </div>
                 <p className="text-sm text-center text-muted-foreground">
-                  Загрузка: {uploadProgress}%
+                  {isPaused ? 'Приостановлено' : 'Загрузка'}: {uploadProgress}%
                 </p>
               </div>
             )}
 
-            <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
-              {uploading ? (
+            <div className="flex gap-2">
+              {(uploading || isPaused) ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  Загрузка...
+                  <Button onClick={handlePauseResume} variant="outline" className="flex-1 gap-2">
+                    <Icon name={isPaused ? "Play" : "Pause"} size={18} />
+                    {isPaused ? "Продолжить" : "Пауза"}
+                  </Button>
+                  <Button onClick={handleCancelUpload} variant="destructive" className="flex-1 gap-2">
+                    <Icon name="X" size={18} />
+                    Отменить
+                  </Button>
                 </>
               ) : (
-                <>
+                <Button onClick={handleUpload} className="w-full gap-2">
                   <Icon name="Upload" size={18} />
                   Загрузить каталог
-                </>
+                </Button>
               )}
-            </Button>
+            </div>
           </div>
         </Card>
       )}
