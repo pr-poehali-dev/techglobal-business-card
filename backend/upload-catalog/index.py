@@ -37,7 +37,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             'body': json.dumps({'error': 'Method not allowed'})
         }
     
-    body_data = json.loads(event.get('body', '{}'))
+    try:
+        body_data = json.loads(event.get('body', '{}'))
+    except Exception as e:
+        print(f"Error parsing body: {str(e)}")
+        return {
+            'statusCode': 400,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'error': f'Invalid JSON body: {str(e)}'})
+        }
+    
     title = body_data.get('title', '')
     description = body_data.get('description', '')
     category = body_data.get('category', 'xcmg')
@@ -47,6 +59,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     total_chunks = body_data.get('total_chunks', 1)
     upload_id = body_data.get('upload_id', 'single')
     file_size = body_data.get('file_size', 0)
+    
+    print(f"Upload request: chunk {chunk_index}/{total_chunks}, file: {file_name}, size: {file_size}")
     
     if not title or not file_data:
         return {
@@ -71,7 +85,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     try:
+        print(f"Processing chunk {chunk_index}, file_data length: {len(file_data)}")
         chunk_bytes = base64.b64decode(file_data.split(',')[1] if ',' in file_data else file_data)
+        print(f"Decoded chunk size: {len(chunk_bytes)} bytes")
         
         if upload_id not in TEMP_CHUNKS:
             TEMP_CHUNKS[upload_id] = {
