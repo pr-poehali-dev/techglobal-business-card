@@ -152,10 +152,16 @@ const AdminCatalogs = () => {
         
         const reader = new FileReader();
         const base64Chunk = await new Promise<string>((resolve, reject) => {
-          reader.onload = () => resolve(reader.result as string);
+          reader.onload = () => {
+            const result = reader.result as string;
+            const base64Data = result.split(',')[1];
+            resolve(base64Data);
+          };
           reader.onerror = reject;
           reader.readAsDataURL(chunk);
         });
+
+        console.log(`Uploading chunk ${chunkIndex + 1}/${totalChunks}, size: ${chunk.size} bytes`);
 
         const response = await fetch('https://functions.poehali.dev/dbd7cd76-78c9-47c7-a69e-3f4708c84bfc', {
           method: 'POST',
@@ -175,11 +181,13 @@ const AdminCatalogs = () => {
           })
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
-          throw new Error(data.error || 'Upload failed');
+          const errorText = await response.text();
+          console.error('Upload error:', errorText);
+          throw new Error(`Upload failed: ${response.status} ${errorText}`);
         }
+
+        const data = await response.json();
 
         const progress = Math.round(((chunkIndex + 1) / totalChunks) * 100);
         setUploadProgress(progress);
