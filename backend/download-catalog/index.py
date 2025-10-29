@@ -70,7 +70,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         cur = conn.cursor()
         
         sql = f"""
-            SELECT file_data, file_name, file_url
+            SELECT file_url, file_name
             FROM t_p90963059_techglobal_business_.catalogs
             WHERE id = {int(catalog_id)}
         """
@@ -80,7 +80,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         cur.close()
         conn.close()
         
-        if not row:
+        if not row or not row[0]:
             return {
                 'statusCode': 404,
                 'headers': {
@@ -90,39 +90,19 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'error': 'Catalog not found'})
             }
         
-        file_data = row[0]
-        file_name = row[1]
-        file_url = row[2]
+        file_url = row[0]
         
-        if file_data:
-            pdf_bytes = bytes(file_data)
-        elif file_url:
-            parsed = urllib.parse.urlparse(file_url)
-            encoded_path = urllib.parse.quote(parsed.path.encode('utf-8'), safe='/')
-            encoded_url = f"{parsed.scheme}://{parsed.netloc}{encoded_path}"
-            
-            req = urllib.request.Request(encoded_url)
-            with urllib.request.urlopen(req, timeout=30) as response:
-                pdf_bytes = response.read()
-        else:
-            return {
-                'statusCode': 404,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-                'body': json.dumps({'error': 'Catalog file not found'})
-            }
+        parsed = urllib.parse.urlparse(file_url)
+        encoded_path = urllib.parse.quote(parsed.path.encode('utf-8'), safe='/')
+        encoded_url = f"{parsed.scheme}://{parsed.netloc}{encoded_path}"
         
         return {
-            'statusCode': 200,
+            'statusCode': 302,
             'headers': {
-                'Content-Type': 'application/pdf',
-                'Access-Control-Allow-Origin': '*',
-                'Content-Disposition': f'attachment; filename="{file_name}"'
+                'Location': encoded_url,
+                'Access-Control-Allow-Origin': '*'
             },
-            'body': base64.b64encode(pdf_bytes).decode('utf-8'),
-            'isBase64Encoded': True
+            'body': ''
         }
     
     except Exception as e:
