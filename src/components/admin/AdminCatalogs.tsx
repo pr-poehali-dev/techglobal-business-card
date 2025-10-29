@@ -28,6 +28,7 @@ const AdminCatalogs = () => {
   const [catalogs, setCatalogs] = useState<Catalog[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -93,11 +94,21 @@ const AdminCatalogs = () => {
     }
 
     setUploading(true);
+    setUploadProgress(0);
 
     try {
       const reader = new FileReader();
+      
+      reader.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const progress = Math.round((e.loaded / e.total) * 50);
+          setUploadProgress(progress);
+        }
+      };
+      
       reader.onload = async (e) => {
         const base64Data = e.target?.result as string;
+        setUploadProgress(60);
 
         const response = await fetch('https://functions.poehali.dev/dbd7cd76-78c9-47c7-a69e-3f4708c84bfc', {
           method: 'POST',
@@ -113,9 +124,11 @@ const AdminCatalogs = () => {
           })
         });
 
+        setUploadProgress(90);
         const data = await response.json();
 
         if (response.ok) {
+          setUploadProgress(100);
           toast({
             title: "Успешно",
             description: "Каталог загружен"
@@ -124,6 +137,7 @@ const AdminCatalogs = () => {
           setTitle("");
           setDescription("");
           setFile(null);
+          setUploadProgress(0);
           fetchCatalogs();
         } else {
           throw new Error(data.error || 'Upload failed');
@@ -138,6 +152,7 @@ const AdminCatalogs = () => {
         description: "Не удалось загрузить каталог",
         variant: "destructive"
       });
+      setUploadProgress(0);
     } finally {
       setUploading(false);
     }
@@ -259,6 +274,20 @@ const AdminCatalogs = () => {
                 </p>
               )}
             </div>
+
+            {uploading && (
+              <div className="space-y-2">
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div 
+                    className="bg-primary h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-center text-muted-foreground">
+                  Загрузка: {uploadProgress}%
+                </p>
+              </div>
+            )}
 
             <Button onClick={handleUpload} disabled={uploading} className="w-full gap-2">
               {uploading ? (
