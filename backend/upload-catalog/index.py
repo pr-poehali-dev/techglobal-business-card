@@ -109,9 +109,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         file_bytes = b''.join([all_chunks[i] for i in sorted(all_chunks.keys())])
         
-        file_id = str(uuid.uuid4())
-        file_url = f'https://cdn.poehali.dev/files/{file_id}.pdf'
-        
         import psycopg2
         import psycopg2.extensions
         
@@ -121,12 +118,12 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         sql = f"""
             INSERT INTO t_p90963059_techglobal_business_.catalogs 
-            (title, description, category, file_url, file_name, file_size)
+            (title, description, category, file_name, file_size, file_data, file_url)
             VALUES ('{metadata["title"].replace("'", "''")}', '{metadata["description"].replace("'", "''")}', 
-                    '{metadata["category"]}', '{file_url}', '{metadata["file_name"].replace("'", "''")}', {metadata["file_size"]})
+                    '{metadata["category"]}', '{metadata["file_name"].replace("'", "''")}', {metadata["file_size"]}, %s, '')
             RETURNING id
         """
-        cur.execute(sql)
+        cur.execute(sql, (psycopg2.Binary(file_bytes),))
         catalog_id = cur.fetchone()[0]
         
         cur.close()
@@ -147,7 +144,6 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                     'title': metadata['title'],
                     'description': metadata['description'],
                     'category': metadata['category'],
-                    'file_url': file_url,
                     'file_name': metadata['file_name'],
                     'file_size': metadata['file_size']
                 }

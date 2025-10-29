@@ -18,7 +18,6 @@ interface Catalog {
   title: string;
   description: string;
   category: string;
-  file_url: string;
   file_name: string;
   file_size: number;
   created_at: string;
@@ -60,6 +59,38 @@ const AdminCatalogs = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownloadCatalog = async (catalogId: number, fileName: string) => {
+    try {
+      const response = await fetch(`https://functions.poehali.dev/dba10cc1-2227-43d6-bfdc-130bb8e4bc14?id=${catalogId}`);
+      
+      if (!response.ok) {
+        throw new Error('Download failed');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Успешно",
+        description: "Файл скачан"
+      });
+    } catch (error) {
+      console.error('Error downloading catalog:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось скачать файл",
+        variant: "destructive"
+      });
     }
   };
 
@@ -384,20 +415,14 @@ const AdminCatalogs = () => {
 
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => setViewPdf(catalog.file_url)}
+                    onClick={() => handleDownloadCatalog(catalog.id, catalog.file_name)}
                     variant="outline"
                     size="sm"
                     className="flex-1 gap-2"
                   >
-                    <Icon name="Eye" size={16} />
-                    Просмотр
+                    <Icon name="Download" size={16} />
+                    Скачать
                   </Button>
-                  <a href={catalog.file_url} download className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full gap-2">
-                      <Icon name="Download" size={16} />
-                      Скачать
-                    </Button>
-                  </a>
                 </div>
 
                 {deletingId === catalog.id ? (

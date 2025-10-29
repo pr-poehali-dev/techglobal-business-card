@@ -1,13 +1,14 @@
 import json
 import os
+import base64
 from typing import Dict, Any
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: Get all PDF catalogs from database
-    Args: event with httpMethod, optional queryStringParameters with category filter
+    Business: Download PDF catalog file by ID from database
+    Args: event with httpMethod GET, queryStringParameters with id
           context with request_id
-    Returns: HTTP response with catalogs list
+    Returns: HTTP response with PDF file as base64
     '''
     method: str = event.get('httpMethod', 'GET')
     
@@ -34,7 +35,17 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     params = event.get('queryStringParameters', {}) or {}
-    category = params.get('category', '')
+    catalog_id = params.get('id', '')
+    
+    if not catalog_id:
+        return {
+            'statusCode': 400,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'error': 'Catalog ID is required'})
+        }
     
     database_url = os.environ.get('DATABASE_URL')
     
@@ -56,44 +67,39 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
         
-        where_clause = ""
-        if category:
-            where_clause = f" WHERE category = '{category}'"
-        
         sql = f"""
-            SELECT id, title, description, category, file_name, file_size, 
-                   created_at, updated_at
+            SELECT file_data, file_name
             FROM t_p90963059_techglobal_business_.catalogs
-            {where_clause}
-            ORDER BY created_at DESC
+            WHERE id = {int(catalog_id)}
         """
         cur.execute(sql)
-        rows = cur.fetchall()
-        
-        catalogs = []
-        for row in rows:
-            catalogs.append({
-                'id': row[0],
-                'title': row[1],
-                'description': row[2],
-                'category': row[3],
-                'file_name': row[4],
-                'file_size': row[5],
-                'created_at': row[6].isoformat() if row[6] else None,
-                'updated_at': row[7].isoformat() if row[7] else None
-            })
+        row = cur.fetchone()
         
         cur.close()
         conn.close()
         
+        if not row or not row[0]:
+            return {
+                'statusCode': 404,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({'error': 'Catalog not found'})
+            }
+        
+        file_data = bytes(row[0])
+        file_name = row[1]
+        
         return {
             'statusCode': 200,
             'headers': {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Content-Type': 'application/pdf',
+                'Access-Control-Allow-Origin': '*',
+                'Content-Disposition': f'attachment; filename="{file_name}"'
             },
-            'body': json.dumps({'catalogs': catalogs}),
-            'isBase64Encoded': False
+            'body': base64.b64encode(file_data).decode('utf-8'),
+            'isBase64Encoded': True
         }
     
     except Exception as e:

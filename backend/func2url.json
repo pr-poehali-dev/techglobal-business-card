@@ -1,4 +1,5 @@
 {
+  "download-catalog": "https://functions.poehali.dev/dba10cc1-2227-43d6-bfdc-130bb8e4bc14",
   "get-catalogs": "https://functions.poehali.dev/ba11d4a2-3f01-402e-b27a-60f4e96dd305",
   "delete-catalog": "https://functions.poehali.dev/fa6e325c-ef88-4764-84d3-1d0ce1ad56ab",
   "upload-catalog": "https://functions.poehali.dev/dbd7cd76-78c9-47c7-a69e-3f4708c84bfc",
