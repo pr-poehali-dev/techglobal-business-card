@@ -43,7 +43,13 @@ const Catalogs = () => {
       body: JSON.stringify({ catalog_id: catalog.id })
     }).catch(() => {});
     
-    window.open(catalog.file_url, '_blank');
+    const link = document.createElement('a');
+    link.href = catalog.file_url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const formatFileSize = (bytes: number) => {
