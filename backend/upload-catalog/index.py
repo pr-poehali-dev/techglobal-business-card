@@ -4,12 +4,14 @@ import base64
 import uuid
 from typing import Dict, Any
 
+TEMP_CHUNKS = {}
+
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
-    Business: Upload PDF catalog files to storage and save metadata to database
-    Args: event with httpMethod, body containing file data, title, description, category
+    Business: Upload PDF catalog files in chunks to avoid memory issues
+    Args: event with httpMethod, body containing chunk data, metadata
           context with request_id
-    Returns: HTTP response with catalog info
+    Returns: HTTP response with catalog info (on last chunk)
     '''
     method: str = event.get('httpMethod', 'GET')
     
@@ -41,6 +43,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     category = body_data.get('category', 'xcmg')
     file_data = body_data.get('file_data', '')
     file_name = body_data.get('file_name', 'catalog.pdf')
+    chunk_index = body_data.get('chunk_index', 0)
+    total_chunks = body_data.get('total_chunks', 1)
+    upload_id = body_data.get('upload_id', 'single')
+    file_size = body_data.get('file_size', 0)
     
     if not title or not file_data:
         return {
@@ -65,8 +71,43 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     try:
-        file_bytes = base64.b64decode(file_data.split(',')[1] if ',' in file_data else file_data)
-        file_size = len(file_bytes)
+        chunk_bytes = base64.b64decode(file_data.split(',')[1] if ',' in file_data else file_data)
+        
+        if upload_id not in TEMP_CHUNKS:
+            TEMP_CHUNKS[upload_id] = {
+                'chunks': {},
+                'metadata': {
+                    'title': title,
+                    'description': description,
+                    'category': category,
+                    'file_name': file_name,
+                    'file_size': file_size,
+                    'total_chunks': total_chunks
+                }
+            }
+        
+        TEMP_CHUNKS[upload_id]['chunks'][chunk_index] = chunk_bytes
+        
+        if len(TEMP_CHUNKS[upload_id]['chunks']) < total_chunks:
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'success': True,
+                    'chunk_received': chunk_index,
+                    'chunks_received': len(TEMP_CHUNKS[upload_id]['chunks']),
+                    'total_chunks': total_chunks
+                }),
+                'isBase64Encoded': False
+            }
+        
+        all_chunks = TEMP_CHUNKS[upload_id]['chunks']
+        metadata = TEMP_CHUNKS[upload_id]['metadata']
+        
+        file_bytes = b''.join([all_chunks[i] for i in sorted(all_chunks.keys())])
         
         file_id = str(uuid.uuid4())
         file_url = f'https://cdn.poehali.dev/files/{file_id}.pdf'
@@ -81,8 +122,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         sql = f"""
             INSERT INTO t_p90963059_techglobal_business_.catalogs 
             (title, description, category, file_url, file_name, file_size)
-            VALUES ('{title.replace("'", "''")}', '{description.replace("'", "''")}', 
-                    '{category}', '{file_url}', '{file_name.replace("'", "''")}', {file_size})
+            VALUES ('{metadata["title"].replace("'", "''")}', '{metadata["description"].replace("'", "''")}', 
+                    '{metadata["category"]}', '{file_url}', '{metadata["file_name"].replace("'", "''")}', {metadata["file_size"]})
             RETURNING id
         """
         cur.execute(sql)
@@ -90,6 +131,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         cur.close()
         conn.close()
+        
+        del TEMP_CHUNKS[upload_id]
         
         return {
             'statusCode': 200,
@@ -101,18 +144,21 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'success': True,
                 'catalog': {
                     'id': catalog_id,
-                    'title': title,
-                    'description': description,
-                    'category': category,
+                    'title': metadata['title'],
+                    'description': metadata['description'],
+                    'category': metadata['category'],
                     'file_url': file_url,
-                    'file_name': file_name,
-                    'file_size': file_size
+                    'file_name': metadata['file_name'],
+                    'file_size': metadata['file_size']
                 }
             }),
             'isBase64Encoded': False
         }
     
     except Exception as e:
+        if upload_id in TEMP_CHUNKS:
+            del TEMP_CHUNKS[upload_id]
+        
         return {
             'statusCode': 500,
             'headers': {

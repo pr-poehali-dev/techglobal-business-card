@@ -97,18 +97,21 @@ const AdminCatalogs = () => {
     setUploadProgress(0);
 
     try {
-      const reader = new FileReader();
+      const CHUNK_SIZE = 5 * 1024 * 1024; // 5 МБ чанки
+      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+      const uploadId = Math.random().toString(36).substring(7);
       
-      reader.onprogress = (e) => {
-        if (e.lengthComputable) {
-          const progress = Math.round((e.loaded / e.total) * 50);
-          setUploadProgress(progress);
-        }
-      };
-      
-      reader.onload = async (e) => {
-        const base64Data = e.target?.result as string;
-        setUploadProgress(60);
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        const start = chunkIndex * CHUNK_SIZE;
+        const end = Math.min(start + CHUNK_SIZE, file.size);
+        const chunk = file.slice(start, end);
+        
+        const reader = new FileReader();
+        const base64Chunk = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(chunk);
+        });
 
         const response = await fetch('https://functions.poehali.dev/dbd7cd76-78c9-47c7-a69e-3f4708c84bfc', {
           method: 'POST',
@@ -119,37 +122,41 @@ const AdminCatalogs = () => {
             title,
             description,
             category,
-            file_data: base64Data,
-            file_name: file.name
+            file_data: base64Chunk,
+            file_name: file.name,
+            chunk_index: chunkIndex,
+            total_chunks: totalChunks,
+            upload_id: uploadId,
+            file_size: file.size
           })
         });
 
-        setUploadProgress(90);
         const data = await response.json();
 
-        if (response.ok) {
-          setUploadProgress(100);
-          toast({
-            title: "Успешно",
-            description: "Каталог загружен"
-          });
-          setShowUploadForm(false);
-          setTitle("");
-          setDescription("");
-          setFile(null);
-          setUploadProgress(0);
-          fetchCatalogs();
-        } else {
+        if (!response.ok) {
           throw new Error(data.error || 'Upload failed');
         }
-      };
 
-      reader.readAsDataURL(file);
+        const progress = Math.round(((chunkIndex + 1) / totalChunks) * 100);
+        setUploadProgress(progress);
+      }
+
+      toast({
+        title: "Успешно",
+        description: "Каталог загружен"
+      });
+      setShowUploadForm(false);
+      setTitle("");
+      setDescription("");
+      setFile(null);
+      setUploadProgress(0);
+      fetchCatalogs();
+      
     } catch (error) {
       console.error('Error uploading catalog:', error);
       toast({
         title: "Ошибка",
-        description: "Не удалось загрузить каталог",
+        description: error instanceof Error ? error.message : "Не удалось загрузить каталог",
         variant: "destructive"
       });
       setUploadProgress(0);
