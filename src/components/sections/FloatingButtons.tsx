@@ -34,6 +34,7 @@ const FloatingButtons = () => {
         rel="noopener noreferrer"
         className="w-14 h-14 bg-[#25D366] hover:bg-[#20BA5A] rounded-full flex items-center justify-center animate-pulse-soft hover:shadow-xl transition-all hover:scale-110"
         aria-label="Написать в WhatsApp"
+        title="Написать в WhatsApp"
       >
         <Icon name="MessageCircle" size={26} className="text-white" />
       </a>

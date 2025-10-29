@@ -83,7 +83,7 @@ const ContactSection = ({
                   <p className="font-medium mb-3">即时通讯</p>
                   <div className="flex gap-3">
                     <a 
-                      href="https://wa.me/8613165540208" 
+                      href="https://wa.me/79959658000" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-4 py-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-lg transition-colors text-sm font-medium"
