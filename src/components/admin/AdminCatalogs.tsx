@@ -1,27 +1,12 @@
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import Icon from "@/components/ui/icon";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
-interface Catalog {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  file_name: string;
-  file_size: number;
-  created_at: string;
-}
+import { Catalog } from "./catalog/types";
+import UploadForm from "./catalog/UploadForm";
+import CatalogList from "./catalog/CatalogList";
+import DeleteDialog from "./catalog/DeleteDialog";
+import PdfViewer from "./catalog/PdfViewer";
 
 const AdminCatalogs = () => {
   const [catalogs, setCatalogs] = useState<Catalog[]>([]);
@@ -39,7 +24,8 @@ const AdminCatalogs = () => {
   const [externalUrl, setExternalUrl] = useState("");
   const [deletePassword, setDeletePassword] = useState("");
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [viewPdf, setViewPdf] = useState<string | null>(null);
+  const [viewPdf, setViewPdf] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -137,7 +123,6 @@ const AdminCatalogs = () => {
       return;
     }
 
-    // Если указана внешняя ссылка - отправляем её напрямую
     if (externalUrl) {
       try {
         setUploading(true);
@@ -183,7 +168,6 @@ const AdminCatalogs = () => {
       return;
     }
 
-    // Загрузка файла чанками
     if (!file) return;
 
     setUploading(true);
@@ -220,8 +204,6 @@ const AdminCatalogs = () => {
           reader.readAsDataURL(chunk);
         });
 
-        console.log(`Uploading chunk ${chunkIndex + 1}/${totalChunks}, size: ${chunk.size} bytes`);
-
         const response = await fetch('https://functions.poehali.dev/dbd7cd76-78c9-47c7-a69e-3f4708c84bfc', {
           method: 'POST',
           headers: {
@@ -242,11 +224,8 @@ const AdminCatalogs = () => {
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('Upload error:', errorText);
           throw new Error(`Upload failed: ${response.status} ${errorText}`);
         }
-
-        const data = await response.json();
 
         const progress = Math.round(((chunkIndex + 1) / totalChunks) * 100);
         setUploadProgress(progress);
@@ -276,6 +255,8 @@ const AdminCatalogs = () => {
         description: error instanceof Error ? error.message : "Не удалось загрузить каталог",
         variant: "destructive"
       });
+      setUploading(false);
+      setUploadProgress(0);
     } finally {
       if (!isPaused) {
         setUploading(false);
@@ -283,33 +264,33 @@ const AdminCatalogs = () => {
     }
   };
 
-  const handlePauseResume = () => {
-    if (uploading && !isPaused) {
-      setIsPaused(true);
-      setUploading(false);
-    } else if (isPaused) {
-      setIsPaused(false);
-      handleUpload();
-    }
+  const handlePauseUpload = () => {
+    setIsPaused(true);
+    setUploading(false);
+  };
+
+  const handleResumeUpload = () => {
+    setIsPaused(false);
+    handleUpload();
   };
 
   const handleCancelUpload = () => {
-    setIsPaused(false);
     setUploading(false);
+    setIsPaused(false);
     setUploadProgress(0);
-    setUploadId(null);
     setCurrentChunk(0);
+    setUploadId(null);
+    setShowUploadForm(false);
+    setTitle("");
+    setDescription("");
+    setFile(null);
+    setExternalUrl("");
   };
 
-  const handleDelete = async (catalogId: number) => {
-    if (!deletePassword) {
-      toast({
-        title: "Ошибка",
-        description: "Введите пароль для удаления",
-        variant: "destructive"
-      });
-      return;
-    }
+  const handleDeleteCatalog = async () => {
+    if (!deletingId || !deletePassword) return;
+
+    setDeleting(true);
 
     try {
       const response = await fetch('https://functions.poehali.dev/fa6e325c-ef88-4764-84d3-1d0ce1ad56ab', {
@@ -318,288 +299,94 @@ const AdminCatalogs = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: catalogId,
+          catalog_id: deletingId,
           password: deletePassword
         })
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast({
-          title: "Успешно",
-          description: "Каталог удален"
-        });
-        setDeletePassword("");
-        setDeletingId(null);
-        fetchCatalogs();
-      } else {
-        throw new Error(data.error || 'Delete failed');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Delete failed');
       }
-    } catch (error: any) {
+
+      toast({
+        title: "Успешно",
+        description: "Каталог удален"
+      });
+      setDeletingId(null);
+      setDeletePassword("");
+      fetchCatalogs();
+    } catch (error) {
+      console.error('Error deleting catalog:', error);
       toast({
         title: "Ошибка",
-        description: error.message || "Не удалось удалить каталог",
+        description: error instanceof Error ? error.message : "Не удалось удалить каталог",
         variant: "destructive"
       });
+    } finally {
+      setDeleting(false);
     }
   };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' Б';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' КБ';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' МБ';
-  };
-
-  if (loading) {
-    return (
-      <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-        <p className="mt-4 text-muted-foreground">Загрузка каталогов...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Каталоги PDF</h2>
-        <Button onClick={() => setShowUploadForm(!showUploadForm)} className="gap-2">
-          <Icon name={showUploadForm ? "X" : "Plus"} size={18} />
-          {showUploadForm ? "Отмена" : "Загрузить PDF"}
+        <div>
+          <h2 className="text-2xl font-bold">Каталоги продукции</h2>
+          <p className="text-muted-foreground mt-1">Управление PDF каталогами</p>
+        </div>
+        <Button onClick={() => setShowUploadForm(true)}>
+          <Icon name="Plus" size={16} className="mr-2" />
+          Добавить каталог
         </Button>
       </div>
 
-      {showUploadForm && (
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">Название каталога</label>
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Экскаваторы XCMG 2024"
-              />
-            </div>
+      <CatalogList
+        catalogs={catalogs}
+        loading={loading}
+        onDownload={handleDownloadCatalog}
+        onView={(id) => setViewPdf(id)}
+        onDelete={(id) => setDeletingId(id)}
+      />
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Описание</label>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Полный каталог гусеничных экскаваторов..."
-                rows={3}
-              />
-            </div>
+      <UploadForm
+        show={showUploadForm}
+        uploading={uploading}
+        uploadProgress={uploadProgress}
+        isPaused={isPaused}
+        title={title}
+        description={description}
+        category={category}
+        file={file}
+        externalUrl={externalUrl}
+        onClose={() => !uploading && setShowUploadForm(false)}
+        onTitleChange={setTitle}
+        onDescriptionChange={setDescription}
+        onCategoryChange={setCategory}
+        onFileChange={handleFileChange}
+        onExternalUrlChange={setExternalUrl}
+        onUpload={handleUpload}
+        onPause={handlePauseUpload}
+        onResume={handleResumeUpload}
+        onCancel={handleCancelUpload}
+      />
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Категория</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-md"
-              >
-                <option value="xcmg">XCMG</option>
-                <option value="other">Другое</option>
-              </select>
-            </div>
+      <DeleteDialog
+        show={deletingId !== null}
+        deleting={deleting}
+        password={deletePassword}
+        onPasswordChange={setDeletePassword}
+        onConfirm={handleDeleteCatalog}
+        onCancel={() => {
+          setDeletingId(null);
+          setDeletePassword("");
+        }}
+      />
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Способ загрузки</label>
-              <div className="space-y-4">
-                <div>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input 
-                      type="radio" 
-                      name="uploadType" 
-                      checked={!externalUrl} 
-                      onChange={() => setExternalUrl("")}
-                    />
-                    Загрузить файл с компьютера
-                  </label>
-                  {!externalUrl && (
-                    <div className="mt-2 ml-6">
-                      <Input
-                        type="file"
-                        accept=".pdf"
-                        onChange={handleFileChange}
-                      />
-                      {file && (
-                        <p className="text-sm text-muted-foreground mt-2">
-                          Выбран файл: {file.name} ({formatFileSize(file.size)})
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input 
-                      type="radio" 
-                      name="uploadType" 
-                      checked={!!externalUrl} 
-                      onChange={() => { setExternalUrl("https://s3.ru1.storage.beget.cloud/e3ff6c0453f8-focused-sabra/"); setFile(null); }}
-                    />
-                    Ссылка на файл в S3 (Beget)
-                  </label>
-                  {externalUrl && (
-                    <div className="mt-2 ml-6">
-                      <Input
-                        type="text"
-                        placeholder="https://s3.ru1.storage.beget.cloud/e3ff6c0453f8-focused-sabra/filename.pdf"
-                        value={externalUrl}
-                        onChange={(e) => setExternalUrl(e.target.value)}
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Вставьте полную ссылку на PDF файл в вашем S3 хранилище
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {(uploading || isPaused) && (
-              <div className="space-y-2">
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div 
-                    className="bg-primary h-2.5 rounded-full transition-all duration-300"
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                </div>
-                <p className="text-sm text-center text-muted-foreground">
-                  {isPaused ? 'Приостановлено' : 'Загрузка'}: {uploadProgress}%
-                </p>
-              </div>
-            )}
-
-            <div className="flex gap-2">
-              {(uploading || isPaused) ? (
-                <>
-                  <Button onClick={handlePauseResume} variant="outline" className="flex-1 gap-2">
-                    <Icon name={isPaused ? "Play" : "Pause"} size={18} />
-                    {isPaused ? "Продолжить" : "Пауза"}
-                  </Button>
-                  <Button onClick={handleCancelUpload} variant="destructive" className="flex-1 gap-2">
-                    <Icon name="X" size={18} />
-                    Отменить
-                  </Button>
-                </>
-              ) : (
-                <Button onClick={handleUpload} className="w-full gap-2">
-                  <Icon name="Upload" size={18} />
-                  Загрузить каталог
-                </Button>
-              )}
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {catalogs.length === 0 ? (
-        <Card className="p-8 text-center">
-          <Icon name="FileText" size={48} className="mx-auto mb-4 text-muted-foreground" />
-          <p className="text-lg text-muted-foreground">Каталогов пока нет</p>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {catalogs.map((catalog) => (
-            <Card key={catalog.id} className="p-6">
-              <div className="space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg mb-1">{catalog.title}</h3>
-                    {catalog.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2">{catalog.description}</p>
-                    )}
-                  </div>
-                  <Icon name="FileText" size={24} className="text-primary flex-shrink-0 ml-2" />
-                </div>
-
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p>Категория: {catalog.category}</p>
-                  <p>Размер: {formatFileSize(catalog.file_size)}</p>
-                  <p>Загружен: {new Date(catalog.created_at).toLocaleDateString('ru-RU')}</p>
-                </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleDownloadCatalog(catalog.id, catalog.file_name)}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 gap-2"
-                  >
-                    <Icon name="Download" size={16} />
-                    Скачать
-                  </Button>
-                </div>
-
-                {deletingId === catalog.id ? (
-                  <div className="space-y-2 pt-2 border-t">
-                    <Input
-                      type="password"
-                      placeholder="Пароль для удаления"
-                      value={deletePassword}
-                      onChange={(e) => setDeletePassword(e.target.value)}
-                      className="text-sm"
-                    />
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => handleDelete(catalog.id)}
-                        variant="destructive"
-                        size="sm"
-                        className="flex-1"
-                      >
-                        Подтвердить
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setDeletingId(null);
-                          setDeletePassword("");
-                        }}
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                      >
-                        Отмена
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => setDeletingId(catalog.id)}
-                    variant="outline"
-                    size="sm"
-                    className="w-full gap-2 text-destructive hover:text-destructive"
-                  >
-                    <Icon name="Trash2" size={16} />
-                    Удалить
-                  </Button>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      <Dialog open={!!viewPdf} onOpenChange={() => setViewPdf(null)}>
-        <DialogContent className="max-w-4xl h-[90vh]">
-          <DialogHeader>
-            <DialogTitle>Просмотр каталога</DialogTitle>
-            <DialogDescription>
-              PDF документ открыт для просмотра
-            </DialogDescription>
-          </DialogHeader>
-          {viewPdf && (
-            <iframe
-              src={viewPdf}
-              className="w-full h-full rounded-md"
-              title="PDF Viewer"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <PdfViewer
+        catalogId={viewPdf}
+        onClose={() => setViewPdf(null)}
+      />
     </div>
   );
 };
