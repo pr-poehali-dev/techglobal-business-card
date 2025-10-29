@@ -1,0 +1,23 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS запрос для CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Отслеживание скачивания",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "catalog_id": 1
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

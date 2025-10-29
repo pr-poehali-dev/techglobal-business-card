@@ -38,19 +38,21 @@ const Catalogs = () => {
 
   const handleDownload = async (catalog: Catalog) => {
     try {
-      const response = await fetch(catalog.file_url);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      fetch('https://functions.poehali.dev/763cc298-fef8-49ed-9aac-1ae3929a9e5d', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ catalog_id: catalog.id })
+      }).catch(() => {});
+      
       const a = document.createElement('a');
-      a.href = url;
+      a.href = catalog.file_url;
       a.download = catalog.file_name;
+      a.target = '_blank';
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error downloading file:', error);
-      window.open(catalog.file_url, '_blank');
     }
   };
 
