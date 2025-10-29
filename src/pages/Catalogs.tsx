@@ -2,13 +2,6 @@ import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 interface Catalog {
   id: number;
@@ -25,7 +18,7 @@ const Catalogs = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [catalogs, setCatalogs] = useState<Catalog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewPdf, setViewPdf] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCatalogs();
@@ -43,11 +36,31 @@ const Catalogs = () => {
     }
   };
 
+  const handleDownload = async (catalog: Catalog) => {
+    try {
+      const response = await fetch(catalog.file_url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = catalog.file_name;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      window.open(catalog.file_url, '_blank');
+    }
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return bytes + ' Б';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' КБ';
     return (bytes / (1024 * 1024)).toFixed(1) + ' МБ';
   };
+
+  const xcmgCatalogs = catalogs.filter(c => c.category === 'xcmg');
 
   return (
     <div className="min-h-screen bg-background">
@@ -140,72 +153,80 @@ const Catalogs = () => {
             <p className="text-xl text-muted-foreground">Техническая документация и характеристики</p>
           </div>
 
-          <div className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <img 
-                src="https://cdn.poehali.dev/files/xcmg-logo.png" 
-                alt="XCMG" 
-                className="h-12 object-contain"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-              <h2 className="text-3xl font-bold">XCMG</h2>
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+              <p className="mt-4 text-muted-foreground">Загрузка каталогов...</p>
             </div>
+          ) : selectedCategory === null ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <button
+                onClick={() => setSelectedCategory('xcmg')}
+                className="bg-card border border-border rounded-lg p-8 hover:shadow-lg transition-all hover:border-primary group"
+              >
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <Icon name="FolderOpen" size={40} className="text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2">XCMG</h2>
+                    <p className="text-muted-foreground">{xcmgCatalogs.length} каталогов</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div className="mb-8">
+                <Button
+                  onClick={() => setSelectedCategory(null)}
+                  variant="outline"
+                  className="gap-2 mb-6"
+                >
+                  <Icon name="ArrowLeft" size={18} />
+                  Назад к категориям
+                </Button>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-3xl font-bold">XCMG</h2>
+                </div>
+              </div>
 
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-                <p className="mt-4 text-muted-foreground">Загрузка каталогов...</p>
-              </div>
-            ) : catalogs.length === 0 ? (
-              <div className="text-center py-12">
-                <Icon name="FileText" size={64} className="mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-xl font-semibold mb-2">Каталогов пока нет</h3>
-                <p className="text-muted-foreground">Каталоги появятся после загрузки через админ-панель</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {catalogs.filter(c => c.category === 'xcmg').map((catalog) => (
-                  <div 
-                    key={catalog.id} 
-                    className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    <div className="aspect-video bg-muted flex items-center justify-center">
-                      <Icon name="FileText" size={64} className="text-muted-foreground" />
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2">{catalog.title}</h3>
-                      <p className="text-muted-foreground mb-2">{catalog.description}</p>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Размер: {formatFileSize(catalog.file_size)}
-                      </p>
-                      <div className="flex gap-2">
+              {xcmgCatalogs.length === 0 ? (
+                <div className="text-center py-12">
+                  <Icon name="FileText" size={64} className="mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-xl font-semibold mb-2">Каталогов пока нет</h3>
+                  <p className="text-muted-foreground">Каталоги появятся после загрузки через админ-панель</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {xcmgCatalogs.map((catalog) => (
+                    <div 
+                      key={catalog.id} 
+                      className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                    >
+                      <div className="aspect-video bg-muted flex items-center justify-center">
+                        <Icon name="FileText" size={64} className="text-muted-foreground" />
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-xl font-semibold mb-2">{catalog.title}</h3>
+                        <p className="text-muted-foreground mb-2 line-clamp-2">{catalog.description}</p>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Размер: {formatFileSize(catalog.file_size)}
+                        </p>
                         <Button 
-                          onClick={() => setViewPdf(catalog.file_url)}
-                          variant="outline"
-                          className="flex-1 gap-2"
+                          onClick={() => handleDownload(catalog)}
+                          className="w-full gap-2"
                         >
-                          <Icon name="Eye" size={18} />
-                          Просмотр
+                          <Icon name="Download" size={18} />
+                          Скачать
                         </Button>
-                        <a 
-                          href={catalog.file_url} 
-                          download
-                          className="flex-1"
-                        >
-                          <Button className="w-full gap-2">
-                            <Icon name="Download" size={18} />
-                            Скачать
-                          </Button>
-                        </a>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 
@@ -216,24 +237,6 @@ const Catalogs = () => {
           </p>
         </div>
       </footer>
-
-      <Dialog open={!!viewPdf} onOpenChange={() => setViewPdf(null)}>
-        <DialogContent className="max-w-4xl h-[90vh]">
-          <DialogHeader>
-            <DialogTitle>Просмотр каталога</DialogTitle>
-            <DialogDescription>
-              PDF документ открыт для просмотра
-            </DialogDescription>
-          </DialogHeader>
-          {viewPdf && (
-            <iframe
-              src={viewPdf}
-              className="w-full h-full rounded-md"
-              title="PDF Viewer"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
