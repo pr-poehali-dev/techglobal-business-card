@@ -24,10 +24,9 @@ const Header = ({ scrollToSection }: HeaderProps) => {
           aria-label="Home"
         >
           <img 
-            src="https://cdn.poehali.dev/files/f0e9eaf0-f813-41a1-bd09-80829adf3b3e.png" 
+            src="https://cdn.poehali.dev/projects/58de4a73-eb2a-4a4e-b132-1fe940434eae/files/66ecad7b-bc43-4356-9992-6421a26e411c.jpg" 
             alt="TechGlobal" 
             className="h-14 md:h-16 object-contain"
-            style={{ imageRendering: 'crisp-edges' }}
           />
         </button>
         
