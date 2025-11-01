@@ -13,7 +13,7 @@ const WeChatButton = () => {
   };
 
   const handleWhatsAppClick = () => {
-    window.open('https://wa.me/79645113344', '_blank');
+    window.open('https://wa.me/79959658000', '_blank');
   };
 
   return (
