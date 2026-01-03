@@ -20,7 +20,7 @@ const HeroSection = ({ scrollY, scrollToSection }: HeroSectionProps) => {
       <div className="container mx-auto px-4 z-10 text-center max-w-5xl">
         <div className="animate-fade-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            Поставка спецтехники и промышленного оборудования из КНР
+            Продажа спецтехники и промышленного оборудования из КНР
           </h1>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto animate-slide-up">
             Прямые поставки от заводов-производителей. Гибкие условия и конкурентные цены. 10 лет успешной работы на рынке.
